@@ -1,0 +1,79 @@
+import streamlit as st
+import pandas as pd
+import numpy as np
+from scipy.stats import chi2
+import matplotlib.pyplot as plt
+
+def benfords_law(data):
+    # Calculate the frequency distribution of the first, second, and third digits
+    first_digits = data.apply(lambda x: int(str(x)[0]))
+    second_digits = data.apply(lambda x: int(str(x)[1]) if len(str(x)) >= 2 else 0)
+    third_digits = data.apply(lambda x: int(str(x)[2]) if len(str(x)) >= 3 else 0)
+    
+    digit_counts = [first_digits.value_counts().sort_index(), 
+                    second_digits.value_counts().sort_index(), 
+                    third_digits.value_counts().sort_index()]
+    
+    digit_counts = [counts / counts.sum() for counts in digit_counts]
+
+    # Calculate the expected frequency distribution according to Benford's Law
+    expected_counts = np.log10(1 + 1 / np.arange(1, 10))
+    expected_counts /= expected_counts.sum()
+    expected_counts = [np.tile(expected_counts, (9, 1)).T ** (i - 1) for i in range(1, 4)]
+    expected_counts = [counts / counts.sum() for counts in expected_counts]
+
+    # Calculate the difference between the observed and expected frequency distributions
+    chi_squared = sum(((counts - expected_counts[i]) ** 2 / expected_counts[i]).sum() for i, counts in enumerate(digit_counts))
+    p_value = 1 - chi2.cdf(chi_squared, 24)
+
+    return digit_counts, expected_counts, chi_squared, p_value
+
+st.set_page_config(page_title="Fraud Detection with Benford's Law", page_icon=":guardsman:")
+
+st.title("Fraud Detection with Benford's Law")
+
+uploaded_file = st.file_uploader("Choose a file")
+if uploaded_file is not None:
+    data = pd.read_csv(uploaded_file)
+    st.write("Sample data:")
+    st.write(data.head())
+
+    # Analyze data with Benford's Law
+    digit_counts, expected_counts, chi_squared, p_value = benfords_law(data)
+
+    # Display results
+    st.write('First Digit Counts:')
+    st.write(digit_counts[0])
+
+    st.write('First Digit Expected Counts:')
+    st.write(expected_counts[0])
+
+    st.write('Second Digit Counts:')
+    st.write(digit_counts[1])
+
+    st.write('Second Digit Expected Counts:')
+    st.write(expected_counts[1])
+
+    st.write('Third Digit Counts:')
+    st.write(digit_counts[2])
+
+    st.write('Third Digit Expected Counts:')
+    st.write(expected_counts[2])
+
+    st.write('Chi-Squared:')
+    st.write(chi_squared)
+
+    st.write('P-Value:')
+    st.write(p_value)
+
+    # Plot results
+    fig, axs = plt.subplots(1, 3, figsize=(10, 4))
+    for i, ax in enumerate(axs):
+        ax.bar(range(1, 10), digit_counts[i], label='Observed', color='C0')
+        ax.plot(range(1, 10), expected_counts[i], label='Expected', color='C1', marker='o')
+        ax.set_xlabel(f'{["First", "Second", "Third"][i]} Digit')
+        ax.set_ylabel('Frequency')
+        ax.set_title(f'Benford\'s Law Analysis ({["First", "Second", "Third"][i]} Digit)')
+        ax.legend()
+
+    st.pyplot(fig)
