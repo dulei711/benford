@@ -1,42 +1,72 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-from collections import OrderedDict
+import numpy as np
 import math
+from collections import OrderedDict
+import seaborn as sns
+import matplotlib.pyplot as plt
 
-st.set_page_config(page_title='Newcomb-Benford Law', page_icon=':bar_chart:', layout='wide')
 
-st.write('# Newcomb-Benford Law')
-st.write('This app uses the Newcomb-Benford Law to detect anomalies in the first three digits of a column in an Excel file. To get started, please upload an Excel file below.')
+@st.cache
+def read_file(file):
+    df = pd.read_excel(file, engine='openpyxl')
+    return df
 
-uploaded_file = st.file_uploader('Upload Excel file', type=['xlsx'])
+@st.cache
+def get_digit_frequency(data, position):
+    if position == 'first':
+        expected_freq_dict = OrderedDict([(d, math.log10(1 + 1 / d)) for d in range(1, 10)])
+    elif position == 'second':
+        expected_freq_dict = OrderedDict([(d, round(math.log10(1 + 1 / (10 * x + d)), 4)) for x in range(1, 10) for d in range(10)])
+    elif position == 'third':
+        expected_freq_dict = OrderedDict([(d, round(math.log10(1 + 1 / (100 * x + 10 * y + d)), 4)) for x in range(1, 10) for y in range(10) for d in range(10)])
+    actual_freq = data.astype(str).str[position].astype(int).value_counts(normalize=True).sort_index().values
+    expected_freq = [expected_freq_dict[d] for d in range(0, 10)]
+    return actual_freq, expected_freq
+
+st.set_page_config(page_title="Newcomb-Benford's Law Anomaly Detection",
+                   page_icon=":guardsman:",
+                   layout="wide")
+
+st.title("Newcomb-Benford's Law Anomaly Detection")
+
+# upload file
+uploaded_file = st.file_uploader("Upload a file", type=["xlsx", "xls"])
+
 if uploaded_file is not None:
-    st.write('## Configuration')
-    st.write('## Data Preview')
-    df = pd.read_excel(uploaded_file)
-    column = st.selectbox("Select Column",df.columns)
-    st.write(df.head())
+    df = read_file(uploaded_file)
+    st.write(df)
+
+    # column selection
+    columns = list(df.columns)
+    column = st.selectbox('Select a column', columns)
 
     # first digit analysis
     st.write('## First Digit Analysis')
-    digit_position = 'First'
-    data = df[column].astype(str).str[0].astype(int)
-    first_digit_df = pd.DataFrame({'Digit': range(1, 10)})
-    first_digit_df['Actual Frequency'] = data.value_counts(normalize=True).sort_index().values
-    expected_freq_dict = OrderedDict([(d, round(math.log10(1 + 1 / d), 4)) if d != 9 else 0.1197 for d in range(1, 10)])
-    first_digit_df['Expected Frequency'] = [expected_freq_dict[d] for d in range(1, 10)]
+    actual_freq, expected_freq = get_digit_frequency(df[column], 'first')
 
-    # chart
     fig, ax = plt.subplots()
-    sns.barplot(x='Digit', y='Frequency', data=pd.DataFrame({'Digit': range(1, 10), 'Frequency': first_digit_df['Actual Frequency']}))
-    sns.lineplot(x='Digit', y='Expected Frequency', data=first_digit_df, color='red', marker='o')
+    sns.barplot(x=list(range(1, 10)), y=actual_freq)
+    sns.lineplot(x=list(range(1, 10)), y=expected_freq, color='red', marker='o')
     ax.set(xlabel='Digit', ylabel='Frequency', title=f'First Digit Analysis ({column})')
     st.pyplot(fig)
 
     # second digit analysis
     st.write('## Second Digit Analysis')
-    digit_position = 'Second'
-    data = df[column].astype(str).str[1].astype(int)
-    second_digit_df = pd.DataFrame({'Digit': range(0, 10)})
-    second_digit_df
+    actual_freq, expected_freq = get_digit_frequency(df[column], 'second')
+
+    fig, ax = plt.subplots()
+    sns.barplot(x=list(range(0, 10)), y=actual_freq)
+    sns.lineplot(x=list(range(0, 10)), y=expected_freq, color='red', marker='o')
+    ax.set(xlabel='Digit', ylabel='Frequency', title=f'Second Digit Analysis ({column})')
+    st.pyplot(fig)
+
+    # third digit analysis
+    st.write('## Third Digit Analysis')
+    actual_freq, expected_freq = get_digit_frequency(df[column], 'third')
+
+    fig, ax = plt.subplots()
+    sns.barplot(x=list(range(0, 10)), y=actual_freq)
+    sns.lineplot(x=list(range(0, 10)), y=expected_freq, color='red', marker='o')
+    ax.set(xlabel='Digit', ylabel='Frequency', title=f'Third Digit Analysis ({column})')
+    st.pyplot(fig)
