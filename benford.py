@@ -40,6 +40,7 @@ if uploaded_file is not None:
     st.sidebar.write("Dataset Summary:")
     st.sidebar.write(df.describe())
     df_column = st.selectbox('Select the Column to evaluate:', df.columns)
+    
     # Analyze the first digit
     st.sidebar.title("First Digit Analysis")
     first_digit_counts, first_digit_chi_square = apply_newcomb_benford_law(df_column, first_digit)
