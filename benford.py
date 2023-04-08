@@ -66,7 +66,7 @@ if uploaded_file is not None:
     column = st.selectbox("Select Column",df.columns)
 
     st.write('**Data sample:**')
-    st.dataframe(column.head())
+    st.dataframe(df[column].head())
 
     st.write('**Analysis:**')
     result = analyze_data(column)
