@@ -23,15 +23,16 @@ def get_digit_frequency(data, position):
     # Count the frequency of each digit
     freq_dict = dict(Counter(selected_digits))
     
-    # Compute the expected frequency of each digit
-    expected_freq_dict = {d: math.log10(1 + 1/d) for d in range(1, 10)}
-    expected_freq_dict[0] = 1 - sum(expected_freq_dict.values())
+    # Compute the expected frequency of each digit and multiply by 100
+    expected_freq_dict = {d: 100 * (1 - (1 / (d + 1))) for d in range(1, 10)}
+    expected_freq_dict[0] = 100 * (1 - sum(expected_freq_dict.values()))
     
     # Convert the frequency dictionaries to lists
     actual_freq = [freq_dict.get(d, 0) for d in range(0, 10)]
-    expected_freq = [expected_freq_dict[d] for d in range(0, 10)]
+    expected_freq = [expected_freq_dict[d] for d in expected_freq_dict.keys()]
     
     return actual_freq, expected_freq
+
 
 
 def plot_frequency_comparison(column, position):
