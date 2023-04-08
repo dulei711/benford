@@ -3,11 +3,20 @@ import numpy as np
 from scipy.stats import chisquare
 import streamlit as st
 
+def get_first_digit(n):
+    return int(str(n)[0])
+
+def get_second_digit(n):
+    return int(str(n)[1])
+
+def get_third_digit(n):
+    return int(str(n)[2])
+
 def check_fraud(numbers):
     # Get the first, second, and third digit of each number
-    first_digits = np.array([int(str(n)[0]) for n in numbers])
-    second_digits = np.array([int(str(n)[1]) for n in numbers if len(str(n)) > 1])
-    third_digits = np.array([int(str(n)[2]) for n in numbers if len(str(n)) > 2])
+    first_digits = np.vectorize(get_first_digit)(numbers)
+    second_digits = np.vectorize(get_second_digit)(numbers)
+    third_digits = np.vectorize(get_third_digit)(numbers)
 
     # Get the expected frequencies according to Newcomb-Benford's law
     expected_frequencies = np.array([np.log10(1 + 1 / d) for d in range(1, 10)])
