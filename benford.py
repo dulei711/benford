@@ -20,7 +20,7 @@ def check_fraud(numbers):
 
     # Get the expected frequencies according to Newcomb-Benford's law
     expected_frequencies = np.array([np.log10(1 + 1 / d) for d in range(1, 10)])
-    expected_frequencies *= len(first_digits)
+    expected_frequencies = np.multiply(expected_frequencies, len(first_digits))
 
     # Get the observed frequencies for the first digit
     observed_frequencies, _ = np.histogram(first_digits, bins=np.arange(1, 11))
