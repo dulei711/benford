@@ -42,7 +42,7 @@ if file is not None:
         df = pd.read_csv(file)
     # If the file is an Excel spreadsheet
     elif file.type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-        df = pd.read_excel(open(file, 'rb'))
+        df = pd.read_excel(file)
     # If the file is a TXT file
     elif file.type == 'text/plain':
         df = pd.read_csv(file, sep='\t', header=None)
