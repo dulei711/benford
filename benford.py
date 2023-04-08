@@ -1,36 +1,58 @@
+import streamlit as st
 import pandas as pd
 import numpy as np
-import streamlit as st
+import matplotlib.pyplot as plt
+from math import log10, floor
 
-def check_fraud(values):
-    # Compute the observed frequencies of the first digits
-    first_digits = np.array([int(str(n)[0]) for n in values])
-    observed_frequencies = np.bincount(first_digits)[1:]
+def first_digit(num):
+    return int(str(num)[0])
 
-    # Compute the expected frequencies according to the Newcomb-Benford law
-    indices = np.arange(1, 10)
-    expected_frequencies = np.log10(1 + 1 / indices)
+def second_digit(num):
+    return int(str(num)[1])
 
-    # Normalize the expected frequencies to match the number of values
-    expected_frequencies *= len(values)
-    
-    # Compute the chi-square statistic and compare it to the critical value
-    chi_square = np.sum((observed_frequencies - expected_frequencies) ** 2 / expected_frequencies)
-    critical_value = 15.51
-    return chi_square > critical_value
+def third_digit(num):
+    return int(str(num)[2])
 
-# Set up the Streamlit app
-st.title("Newcomb-Benford Law Fraud Detection")
-st.write("Upload an Excel file and select a column to check for fraud on the first, second, and third digits.")
-file = st.file_uploader("Choose a file")
-if file is not None:
-    df = pd.read_excel(file, engine="openpyxl")
-    column_names = df.columns.tolist()
-    column_to_check = st.selectbox("Select a column to check for fraud", column_names)
-    if st.button("Check for fraud"):
-        values_to_check = df[column_to_check].values
-        is_fraudulent = check_fraud(values_to_check)
-        if is_fraudulent:
-            st.write(f"Fraud detected in column {column_to_check}!")
-        else:
-            st.write(f"No fraud detected in column {column_to_check}.")
+def get_first_digits(data):
+    return data.apply(first_digit)
+
+def get_second_digits(data):
+    return data.apply(second_digit)
+
+def get_third_digits(data):
+    return data.apply(third_digit)
+
+def get_newcomb_benford_law(digit):
+    return np.array([log10(1 + 1/d) for d in range(1, 10)]).cumsum() + log10(1/2)
+
+def plot_newcomb_benford_law(data, digit):
+    digits = [get_first_digits, get_second_digits, get_third_digits]
+    titles = ["First Digit", "Second Digit", "Third Digit"]
+    db = digits[digit](data)
+    counts = db.value_counts(normalize=True).sort_index()
+    expected_counts = get_newcomb_benford_law(digit)
+    fig, ax = plt.subplots()
+    ax.bar(counts.index, counts.values, label="Actual")
+    ax.plot(range(1, 10), 10**expected_counts, "o-", label="Expected")
+    ax.set_xticks(range(1, 10))
+    ax.set_xticklabels(range(1, 10))
+    ax.set_title(f"{titles[digit]} Distribution")
+    ax.set_xlabel("Digit")
+    ax.set_ylabel("Frequency")
+    ax.legend()
+    st.pyplot(fig)
+
+st.title("Newcomb-Benford's Law for Fraud Detection")
+st.write("This app analyzes an Excel file column using Newcomb-Benford's Law to detect fraud and displays an awesome chart of the analysis.")
+st.write("Upload an Excel file:")
+uploaded_file = st.file_uploader("", type=["xlsx"])
+if uploaded_file is not None:
+    data = pd.read_excel(uploaded_file)
+    column = st.selectbox("Select a column:", data.columns)
+    digit = st.selectbox("Select a digit:", ["First Digit", "Second Digit", "Third Digit"])
+    if digit == "First Digit":
+        plot_newcomb_benford_law(data[column], 0)
+    elif digit == "Second Digit":
+        plot_newcomb_benford_law(data[column], 1)
+    elif digit == "Third Digit":
+        plot_newcomb_benford_law(data[column], 2)
