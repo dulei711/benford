@@ -3,8 +3,7 @@ import streamlit as st
 import seaborn as sns
 import matplotlib.pyplot as plt
 from collections import Counter
-import math
-
+import numpy as np
 import math
 
 def get_digit_frequency(data, position):
