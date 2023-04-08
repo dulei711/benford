@@ -76,7 +76,7 @@ if uploaded_file is not None:
         # Show a message while the fraud detection is running
         with st.spinner("Detecting fraud..."):
             # Apply the check_fraud function to the selected column
-            fraud_mask = df[column_to_check].apply(lambda x: check_fraud(x))
+            fraud_mask = np.apply_along_axis(check_fraud, axis=0, arr=df[column_to_check].values)
 
         # Show the user the results of the fraud detection
         st.write("Fraud detected in the following rows:")
