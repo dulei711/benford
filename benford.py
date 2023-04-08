@@ -1,87 +1,49 @@
-import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
-from scipy.stats import chisquare
-import math
+import numpy as np
+import streamlit as st
+from streamlit_pandas_profiling import st_profile_report
+from newcomb_benford import detect
 
-def first_digit(x):
-    return int(str(x)[0])
+def load_data():
+    file = st.file_uploader("Upload file", type=["xlsx", "xls"])
+    if file is not None:
+        df = pd.read_excel(file)
+        return df
 
-def second_digit(x):
-    return int(str(x)[1])
+def analyze_data(data, column):
+    first_digits = [int(str(i)[0]) for i in data[column] if i > 0]
+    second_digits = [int(str(i)[1]) for i in data[column] if i > 0 and len(str(i)) >= 2]
+    third_digits = [int(str(i)[2]) for i in data[column] if i > 0 and len(str(i)) >= 3]
 
-def third_digit(x):
-    return int(str(x)[2])
-
-def get_expected_counts(n):
-    return [n * (math.log10(1 + 1/d) - math.log10(1 + 1/(d+1))) for d in range(1, 10)]
-
-def analyze_data(column):
-    data = column.dropna()
-    n = len(data)
-    first_digits = data.apply(first_digit)
-    second_digits = data.apply(second_digit)
-    third_digits = data.apply(third_digit)
-
-    observed_counts_first = [sum(first_digits == d) for d in range(1, 10)]
-    expected_counts_first = get_expected_counts(n)
-    chi_square_first = chisquare(observed_counts_first, expected_counts_first)
-
-    observed_counts_second = [sum(second_digits == d) for d in range(1, 10)]
-    expected_counts_second = get_expected_counts(n)
-    chi_square_second = chisquare(observed_counts_second, expected_counts_second)
-
-    observed_counts_third = [sum(third_digits == d) for d in range(1, 10)]
-    expected_counts_third = get_expected_counts(n)
-    chi_square_third = chisquare(observed_counts_third, expected_counts_third)
-
-    return {
-        'observed_counts_first': observed_counts_first,
-        'expected_counts_first': expected_counts_first,
-        'chi_square_first': chi_square_first,
-        'observed_counts_second': observed_counts_second,
-        'expected_counts_second': expected_counts_second,
-        'chi_square_second': chi_square_second,
-        'observed_counts_third': observed_counts_third,
-        'expected_counts_third': expected_counts_third,
-        'chi_square_third': chi_square_third
+    results = {
+        "First Digit": detect(first_digits),
+        "Second Digit": detect(second_digits),
+        "Third Digit": detect(third_digits),
     }
 
-def plot_chart(counts, title):
-    fig, ax = plt.subplots()
-    ax.bar(range(1, 10), counts)
-    ax.set_xlabel('Digit')
-    ax.set_ylabel('Count')
-    ax.set_title(title)
-    st.pyplot(fig)
+    return results
 
-st.set_page_config(page_title='Fraud Detection using Newcomb Benford Law', page_icon=':guardsman:', layout='wide')
+st.title("Fraud Detection using Newcomb-Benford's Law")
+st.write("This app uses Newcomb-Benford's Law to detect fraud in data.")
 
-st.title('Fraud Detection using Newcomb Benford Law')
-st.sidebar.title('Input Data')
+# Load data
+df = load_data()
+if df is not None:
+    st.write("Data Preview:")
+    st.write(df.head())
 
-uploaded_file = st.sidebar.file_uploader('Choose an Excel file', type=['xlsx'])
+    # Select column to analyze
+    columns = list(df.columns)
+    column = st.selectbox("Select column to analyze:", options=columns)
 
-if uploaded_file is not None:
-    df = pd.read_excel(uploaded_file)
-    column = st.selectbox("Select Column",df.columns)
+    # Analyze data
+    results = analyze_data(df, column)
 
-    st.write('**Data sample:**')
-    st.dataframe(df[column].head())
+    # Display results
+    st.write("Results:")
+    st.write(results)
 
-    st.write('**Analysis:**')
-    result = analyze_data(df[column])
-    st.write('First Digit Analysis:')
-    st.write(f'Chi-Square Statistic: {result["chi_square_first"].statistic}')
-    st.write(f'p-value: {result["chi_square_first"].pvalue}')
-    plot_chart(result['observed_counts_first'], 'First Digit Counts')
-
-    st.write('Second Digit Analysis:')
-    st.write(f'Chi-Square Statistic: {result["chi_square_second"].statistic}')
-    st.write(f'p-value: {result["chi_square_second"].pvalue}')
-    plot_chart(result['observed_counts_second'], 'Second Digit Counts')
-
-    st.write('Third Digit Analysis:')
-    st.write(f'Chi-Square Statistic: {result["chi_square_third"].statistic}')
-    st.write(f'p-value: {result["chi_square_third"].pvalue}')
-    plot_chart(result['observed_counts_third'], 'Third Digit Counts')
+    # Display chart
+    st.write("Chart:")
+    chart_data = pd.DataFrame.from_dict(results, orient="index")
+    st.bar_chart(chart_data)
