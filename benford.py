@@ -42,16 +42,24 @@ def load_data(file):
     ax.set_ylabel('Frequency')
     st.pyplot(fig)
 
-# Set up the Streamlit app
-st.set_page_config(page_title="Fraud Detection with Newcomb-Benford's Law", page_icon=":money_with_wings:")
+# Add a title to the app
+st.title("Newcomb-Benford's Law Fraud Detection")
 
-st.write("# Fraud Detection with Newcomb-Benford's Law")
+# Upload an Excel file and select a column to analyze
+file = st.file_uploader("Upload an Excel file", type=["xls", "xlsx"])
+if file is not None:
+    df = pd.read_excel(file)
+    column = st.selectbox("Select a column to analyze", df.columns.tolist())
 
-# Allow the user to upload an Excel file
-uploaded_file = st.file_uploader("Upload an Excel file", type=["xlsx"])
+    # Calculate the frequencies of the first, second, and third digits using Newcomb-Benford's Law
+    freq_1, freq_2, freq_3 = calc_freq(df[column])
 
-# Load the data and display the frequencies and chart
-if uploaded_file is not None:
-    load_data(uploaded_file)
-else:
-    st.warning("Please upload a file.")
+    # Create a bar chart to compare the frequencies with the expected ones
+    fig, ax = plt.subplots()
+    ax.bar([1, 2, 3], [freq_1, freq_2, freq_3], label="Observed")
+    ax.plot([1, 2, 3], [0.301, 0.176, 0.125], 'r-', label="Expected")
+    ax.set_xlabel("Digit")
+    ax.set_ylabel("Frequency")
+    ax.set_title("Newcomb-Benford's Law Frequencies")
+    ax.legend()
+    st.pyplot(fig)
