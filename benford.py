@@ -25,7 +25,7 @@ def get_digit_frequency(data, position):
         actual_freq = data.str[position - 1][data.str[position - 1].str.isnumeric()].astype(int).value_counts(normalize=True).sort_index().values
     else:
         actual_freq = []
-    expected_freq = [expected_freq_dict[d] for d in range(0, 10)]
+    expected_freq = [expected_freq_dict[d] for d in range(1, 10)]
     return actual_freq, expected_freq
 
 st.set_page_config(page_title="Newcomb-Benford's Law Anomaly Detection",
