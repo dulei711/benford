@@ -15,24 +15,19 @@ def calculate_expected_frequencies(df, column_name, digit_position):
         expected_freq = np.log10(1 + 1/np.arange(10, 100))
         expected_freq = np.round(expected_freq / np.sum(expected_freq), 4)
         expected_freq_dict = dict(zip(range(10, 100), expected_freq))
-        # Convert the dictionary to a dataframe and rename the index column
-        freq_df = pd.DataFrame.from_dict(expected_freq_dict, orient='index', columns=['Expected Frequency'])
-        freq_df.index.name = 'Digit'
-        return freq_df
     elif digit_position == 3:
         expected_freq = np.log10(1 + 1/np.arange(100, 1000))
         expected_freq = np.round(expected_freq / np.sum(expected_freq), 4)
         expected_freq_dict = dict(zip(range(100, 1000), expected_freq))
-        # Convert the dictionary to a dataframe and rename the index column
-        freq_df = pd.DataFrame.from_dict(expected_freq_dict, orient='index', columns=['Expected Frequency'])
-        freq_df.index.name = 'Digit'
-        return freq_df
+    # Convert the dictionary to a dataframe and rename the index column
+    freq_df = pd.DataFrame.from_dict(expected_freq_dict, orient='index', columns=['Expected Frequency'])
+    freq_df.index.name = 'Digit'
     # Calculate the actual frequency for each digit
     actual_freq_dict = dict(digits.value_counts(normalize=True))
     # Merge the expected and actual frequencies into a single dataframe
-    freq_df = pd.DataFrame({'Digit': range(1, 10),
-                            'Expected Frequency': expected_freq,
-                            'Actual Frequency': [actual_freq_dict.get(d, 0) for d in range(1, 10)]})
+    freq_df = freq_df.merge(pd.DataFrame({'Digit': range(1, 10),
+                                           'Actual Frequency': [actual_freq_dict.get(d, 0) for d in range(1, 10)]}),
+                             on='Digit')
     return freq_df
 
 st.title('Newcomb Benford\'s Law Anomaly Detection')
