@@ -27,26 +27,24 @@ def get_digit_frequency(data, position):
     expected_freq_dict[0] = math.log10(1.1)
     
     # Convert the frequency dictionaries to lists
-    actual_freq = [freq_dict.get(d, 0) for d in range(0, 10)]
+    actual_freq = [math.log10(freq_dict.get(d, 0) + 1) for d in range(0, 10)]
     expected_freq = [expected_freq_dict.get(d, 0) for d in range(0, 10)]
     
-    # Perform a log analysis on the actual and expected frequencies
-    actual_freq_log = [math.log10(f+1) if f > 0 else 0 for f in actual_freq]
-    expected_freq_log = [math.log10(f+1) if f > 0 else 0 for f in expected_freq]
-    
-    return actual_freq_log, expected_freq_log
-
+    return actual_freq, expected_freq
 
 def plot_frequency_comparison(column, position):
     actual_freq, expected_freq = get_digit_frequency(df[column], position)
     fig, ax = plt.subplots(figsize=(8, 6))
-    sns.barplot(x=list(range(0, 10)), y=actual_freq, ax=ax)
-    sns.lineplot(x=list(range(0, 10)), y=expected_freq, ax=ax)
-    max_freq = max(max(actual_freq), max(expected_freq))
-    ax.set(title=f'Newcomb-Benford Law for Column "{column}" at Digit Position {position}',
-           ylim=(0, max_freq))
-    # Show the plot
+    sns.lineplot(x=list(range(0, 10)), y=actual_freq, ax=ax, label='Actual Frequency')
+    sns.lineplot(x=list(range(0, 10)), y=expected_freq, ax=ax, label='Expected Frequency')
+    ax.set(title=f'Newcomb-Benford Law for Column "{column}" at Digit Position {position}')
+    ax.set_xticks(list(range(0, 10)))
+    ax.set_xticklabels([f'{i}' for i in range(0, 10)])
+    ax.set_xlabel('Digit')
+    ax.set_ylabel('Log Frequency')
+    ax.legend()
     st.pyplot(fig)
+
 
 st.set_page_config(page_title="Newcomb-Benford Law Anomaly Detection")
 st.title("Newcomb-Benford Law Anomaly Detection")
