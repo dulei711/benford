@@ -51,5 +51,6 @@ if uploaded_file is not None:
     # Ask user which digit position to analyze
     position = st.slider("Select a digit position to analyze (1 = first digit)", 1, len(str(df[column].max())))
     
-    # Generate the frequency comparison plot
-    plot_frequency_comparison(column, position)
+    if st.button("RUN"):
+        # Generate the frequency comparison plot
+        plot_frequency_comparison(column, position)
