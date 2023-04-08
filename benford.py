@@ -29,9 +29,18 @@ def get_digit_frequency(data, position):
     
     # Convert the frequency dictionaries to lists
     actual_freq = [freq_dict.get(d, 0) for d in range(0, 10)]
+    
+    # Calculate the mean and standard deviation of the actual frequency values
+    mean = np.mean(actual_freq)
+    std = np.std(actual_freq)
+    
+    # Calculate the z-score for each actual frequency value
+    actual_freq_zscore = [(x - mean) / std for x in actual_freq]
+    
     expected_freq = [expected_freq_dict.get(d, 0) for d in range(0, 10)]
     
-    return actual_freq, expected_freq
+    return actual_freq_zscore, expected_freq
+
 
 
 
