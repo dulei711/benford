@@ -39,10 +39,10 @@ if uploaded_file is not None:
     df = pd.read_csv(uploaded_file) if uploaded_file.type == "text/csv" else pd.read_excel(uploaded_file, engine="openpyxl")
     st.sidebar.write("Dataset Summary:")
     st.sidebar.write(df.describe())
-
+    df_column = st.selectbox('Select the Column to evaluate:', df.columns)
     # Analyze the first digit
     st.sidebar.title("First Digit Analysis")
-    first_digit_counts, first_digit_chi_square = apply_newcomb_benford_law(df["Amount"], first_digit)
+    first_digit_counts, first_digit_chi_square = apply_newcomb_benford_law(df_column, first_digit)
     st.sidebar.write("First Digit Counts:")
     st.sidebar.write(first_digit_counts)
     st.sidebar.write("Chi-Square Statistic:")
@@ -50,7 +50,7 @@ if uploaded_file is not None:
 
     # Analyze the second digit
     st.sidebar.title("Second Digit Analysis")
-    second_digit_counts, second_digit_chi_square = apply_newcomb_benford_law(df["Amount"], second_digit)
+    second_digit_counts, second_digit_chi_square = apply_newcomb_benford_law(df_column, second_digit)
     st.sidebar.write("Second Digit Counts:")
     st.sidebar.write(second_digit_counts)
     st.sidebar.write("Chi-Square Statistic:")
@@ -58,7 +58,7 @@ if uploaded_file is not None:
 
     # Analyze the third digit
     st.sidebar.title("Third Digit Analysis")
-    third_digit_counts, third_digit_chi_square = apply_newcomb_benford_law(df["Amount"], third_digit)
+    third_digit_counts, third_digit_chi_square = apply_newcomb_benford_law(df_column, third_digit)
     st.sidebar.write("Third Digit Counts:")
     st.sidebar.write(third_digit_counts)
     st.sidebar.write("Chi-Square Statistic:")
@@ -71,4 +71,4 @@ if uploaded_file is not None:
     st.write(pd.DataFrame({
         "First Digit": first_digit_counts,
         "Second Digit": second_digit_counts,
-        "Third Digit": third_digit_counts
+        "Third Digit": third_digit_counts}))
