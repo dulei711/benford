@@ -1,3 +1,8 @@
+import pandas as pd
+import streamlit as st
+import numpy as np
+import matplotlib.pyplot as plt
+
 def calculate_expected_frequencies(df, column_name):
     data = df[column_name]
     # Get the first digit of each value
