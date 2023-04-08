@@ -16,8 +16,8 @@ def third_digit(x):
 def get_expected_counts(n):
     return [n * (math.log10(1 + 1/d) - math.log10(1 + 1/(d+1))) for d in range(1, 10)]
 
-def analyze_data(df[column]):
-    data = df[column].dropna()
+def analyze_data(column):
+    data = column.dropna()
     n = len(data)
     first_digits = data.apply(first_digit)
     second_digits = data.apply(second_digit)
