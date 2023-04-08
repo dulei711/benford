@@ -48,7 +48,7 @@ if uploaded_file is not None:
 
     # first digit analysis
     st.write('## First Digit Analysis')
-    actual_freq, expected_freq = get_digit_frequency(df[column], 'first')
+    actual_freq, expected_freq = get_digit_frequency(df[[column]], 'first')
 
     fig, ax = plt.subplots()
     sns.barplot(x=list(range(1, 10)), y=actual_freq)
@@ -58,7 +58,7 @@ if uploaded_file is not None:
 
     # second digit analysis
     st.write('## Second Digit Analysis')
-    actual_freq, expected_freq = get_digit_frequency(df[column], 'second')
+    actual_freq, expected_freq = get_digit_frequency(df[[column]], 'second')
 
     fig, ax = plt.subplots()
     sns.barplot(x=list(range(0, 10)), y=actual_freq)
@@ -68,7 +68,7 @@ if uploaded_file is not None:
 
     # third digit analysis
     st.write('## Third Digit Analysis')
-    actual_freq, expected_freq = get_digit_frequency(df[column], 'third')
+    actual_freq, expected_freq = get_digit_frequency(df[[column]], 'third')
 
     fig, ax = plt.subplots()
     sns.barplot(x=list(range(0, 10)), y=actual_freq)
