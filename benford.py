@@ -32,12 +32,28 @@ st.set_page_config(page_title="Fraud Detection with Benford's Law", page_icon=":
 
 st.title("Fraud Detection with Benford's Law")
 
-uploaded_file = st.file_uploader("Choose a file")
+# Creating a file uploader widget
+file = st.file_uploader("Upload file", type=['csv', 'xls', 'xlsx', 'txt'])
+
+# Checking if a file is uploaded or not
+if file is not None:
+    # If the file is a CSV
+    if file.type == 'text/csv':
+        df = pd.read_csv(file)
+    # If the file is an Excel spreadsheet
+    elif file.type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+        df = pd.read_excel(file)
+    # If the file is a TXT file
+    elif file.type == 'text/plain':
+        df = pd.read_csv(file, sep='\t', header=None)
+    # For all other file types
+    else:
+        st.write("File type not supported")
+
 if uploaded_file is not None:
-    data = pd.read_excel(uploaded_file)
     st.write("Sample data:")
-    st.write(data.head())
-    column_data = st.selectbox('Select the column to evaluate fraud!', data.columns)
+    st.write(df.head())
+    column_data = st.selectbox('Select the column to evaluate fraud!', df.columns)
 
     # Analyze data with Benford's Law
     digit_counts, expected_counts, chi_squared, p_value = benfords_law(column_data)
