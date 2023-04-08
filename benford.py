@@ -26,7 +26,7 @@ def get_digit_frequency(data, position):
         actual_counts = data.str[position][data.str[position].str.isnumeric()].astype(int).value_counts(normalize=True).sort_index()
         for i, count in actual_counts.items():
             actual_freq[i-1] = count
-    expected_freq = [expected_freq_dict[d] for d in expected_freq_dict.keys()]
+    expected_freq = [expected_freq_dict[d] for d in range(1, 10)]
     return actual_freq, expected_freq
 
 
