@@ -37,10 +37,10 @@ if uploaded_file is not None:
     data = pd.read_csv(uploaded_file)
     st.write("Sample data:")
     st.write(data.head())
-    column_data = option = st.selectbox('Select the column to evaluate fraud!', data.columns)
+    column_data = st.selectbox('Select the column to evaluate fraud!', data.columns)
 
     # Analyze data with Benford's Law
-    digit_counts, expected_counts, chi_squared, p_value = benfords_law(data)
+    digit_counts, expected_counts, chi_squared, p_value = benfords_law(column_data)
 
     # Display results
     st.write('First Digit Counts:')
