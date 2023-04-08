@@ -2,7 +2,6 @@ streamlit
 pandas
 numpy
 matplotlib
-openpyxl
-python-math
-scipy
+pandas_profiling
+streamlit-pandas-profiling
 newcomb_benford
