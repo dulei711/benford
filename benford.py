@@ -1,55 +1,86 @@
 import streamlit as st
 import pandas as pd
-import openpyxl
-import numpy as np
 import matplotlib.pyplot as plt
+from scipy.stats import chisquare
 
-def newcomb_benford(column):
-    # Calculate the first, second, and third digits of the column
-    first_digit = abs(column)//10**(int(np.log10(abs(column))))
-    second_digit = abs(column)//10**(int(np.log10(abs(column)))-1)%10
-    third_digit = abs(column)//10**(int(np.log10(abs(column)))-2)%10
-    
-    # Calculate the expected frequencies based on Newcomb Benford's law
-    first_freq = np.log10(1 + 1/first_digit)
-    second_freq = np.log10(1 + 1/(10*first_digit + second_digit))
-    third_freq = np.log10(1 + 1/(100*first_digit + 10*second_digit + third_digit))
-    
-    return [first_freq, second_freq, third_freq]
+def first_digit(x):
+    return int(str(x)[0])
 
-def analyze_excel_file(file):
-    # Read the Excel file into a pandas DataFrame
-    df = pd.read_excel(file, engine='openpyxl')
-    
-    # Get the column to analyze
-    col = st.selectbox('Select a column to analyze:', df.columns)
-    
-    # Calculate the observed and expected frequencies for the first, second, and third digits of the column
-    obs_freq = df[col].apply(lambda x: newcomb_benford(x)).sum()
-    exp_freq = np.log10(np.arange(1, 10)).repeat(3)
-    
-    # Create a bar chart to compare the observed and expected frequencies
+def second_digit(x):
+    return int(str(x)[1])
+
+def third_digit(x):
+    return int(str(x)[2])
+
+def get_expected_counts(n):
+    return [n * (math.log10(1 + 1/d) - math.log10(1 + 1/(d+1))) for d in range(1, 10)]
+
+def analyze_data(column):
+    data = column.dropna()
+    n = len(data)
+    first_digits = data.apply(first_digit)
+    second_digits = data.apply(second_digit)
+    third_digits = data.apply(third_digit)
+
+    observed_counts_first = [sum(first_digits == d) for d in range(1, 10)]
+    expected_counts_first = get_expected_counts(n)
+    chi_square_first = chisquare(observed_counts_first, expected_counts_first)
+
+    observed_counts_second = [sum(second_digits == d) for d in range(1, 10)]
+    expected_counts_second = get_expected_counts(n)
+    chi_square_second = chisquare(observed_counts_second, expected_counts_second)
+
+    observed_counts_third = [sum(third_digits == d) for d in range(1, 10)]
+    expected_counts_third = get_expected_counts(n)
+    chi_square_third = chisquare(observed_counts_third, expected_counts_third)
+
+    return {
+        'observed_counts_first': observed_counts_first,
+        'expected_counts_first': expected_counts_first,
+        'chi_square_first': chi_square_first,
+        'observed_counts_second': observed_counts_second,
+        'expected_counts_second': expected_counts_second,
+        'chi_square_second': chi_square_second,
+        'observed_counts_third': observed_counts_third,
+        'expected_counts_third': expected_counts_third,
+        'chi_square_third': chi_square_third
+    }
+
+def plot_chart(counts, title):
     fig, ax = plt.subplots()
-    ax.bar(np.arange(1, 10)-0.2, obs_freq, width=0.4, color='orange', label='Observed')
-    ax.bar(np.arange(1, 10)+0.2, exp_freq, width=0.4, color='blue', label='Expected')
+    ax.bar(range(1, 10), counts)
     ax.set_xlabel('Digit')
-    ax.set_ylabel('Frequency (log10)')
-    ax.set_title('Newcomb Benford\'s Law Analysis')
-    ax.legend()
-    
-    # Show the chart in the Streamlit app
+    ax.set_ylabel('Count')
+    ax.set_title(title)
     st.pyplot(fig)
 
+st.set_page_config(page_title='Fraud Detection using Newcomb Benford Law', page_icon=':guardsman:', layout='wide')
 
-st.set_page_config(page_title='Fraud Detection with Newcomb Benford\'s Law')
+st.title('Fraud Detection using Newcomb Benford Law')
+st.sidebar.title('Input Data')
 
-# Add a title to the app
-st.title('Fraud Detection with Newcomb Benford\'s Law')
+uploaded_file = st.sidebar.file_uploader('Choose an Excel file', type=['xlsx'])
 
-# Add a file uploader to the app
-file = st.file_uploader('Upload an Excel file', type=['xlsx'])
+if uploaded_file is not None:
+    df = pd.read_excel(uploaded_file)
+    column = df[df.columns[0]]
 
+    st.write('**Data sample:**')
+    st.write(column.head())
 
-# Analyze the Excel file if a file has been uploaded
-if file is not None:
-    analyze_excel_file(file)
+    st.write('**Analysis:**')
+    result = analyze_data(column)
+    st.write('First Digit Analysis:')
+    st.write(f'Chi-Square Statistic: {result["chi_square_first"].statistic}')
+    st.write(f'p-value: {result["chi_square_first"].pvalue}')
+    plot_chart(result['observed_counts_first'], 'First Digit Counts')
+
+    st.write('Second Digit Analysis:')
+    st.write(f'Chi-Square Statistic: {result["chi_square_second"].statistic}')
+    st.write(f'p-value: {result["chi_square_second"].pvalue}')
+    plot_chart(result['observed_counts_second'], 'Second Digit Counts')
+
+    st.write('Third Digit Analysis:')
+    st.write(f'Chi-Square Statistic: {result["chi_square_third"].statistic}')
+    st.write(f'p-value: {result["chi_square_third"].pvalue}')
+    plot_chart(result['observed_counts_third'], 'Third Digit Counts')
