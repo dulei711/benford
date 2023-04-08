@@ -1,83 +1,36 @@
 import pandas as pd
 import numpy as np
-from scipy.stats import chisquare
 import streamlit as st
 
-def get_first_digit(n):
-    return int(str(n)[0])
+def check_fraud(values):
+    # Compute the observed frequencies of the first digits
+    first_digits = np.array([int(str(n)[0]) for n in values])
+    observed_frequencies = np.bincount(first_digits)[1:]
 
-def get_second_digit(n):
-    return int(str(n)[1])
+    # Compute the expected frequencies according to the Newcomb-Benford law
+    indices = np.arange(1, 10)
+    expected_frequencies = np.log10(1 + 1 / indices)
 
-def get_third_digit(n):
-    return int(str(n)[2])
-
-def check_fraud(numbers):
-    # Get the first, second, and third digit of each number
-    first_digits = np.vectorize(get_first_digit)(numbers)
-    second_digits = np.vectorize(get_second_digit)(numbers)
-    third_digits = np.vectorize(get_third_digit)(numbers)
-
-    # Get the expected frequencies according to Newcomb-Benford's law
-    expected_frequencies = np.array([np.log10(1 + 1 / d) for d in range(1, 10)])
-    expected_frequencies = np.multiply(expected_frequencies, len(first_digits))
-
-    # Get the observed frequencies for the first digit
-    observed_frequencies, _ = np.histogram(first_digits, bins=np.arange(1, 11))
-
-    # Test if the observed frequencies for the first digit follow the expected frequencies using a chi-square test
-    _, p_value = chisquare(observed_frequencies, expected_frequencies)
-
-    # If the p-value is less than the significance level, assume fraud
-    if p_value < 0.05:
-        return True
+    # Normalize the expected frequencies to match the number of values
+    expected_frequencies *= len(values)
     
-    # Get the observed frequencies for the second digit
-    observed_frequencies, _ = np.histogram(second_digits, bins=np.arange(1, 11))
+    # Compute the chi-square statistic and compare it to the critical value
+    chi_square = np.sum((observed_frequencies - expected_frequencies) ** 2 / expected_frequencies)
+    critical_value = 15.51
+    return chi_square > critical_value
 
-    # Test if the observed frequencies for the second digit follow the expected frequencies using a chi-square test
-    _, p_value = chisquare(observed_frequencies, expected_frequencies)
-
-    # If the p-value is less than the significance level, assume fraud
-    if p_value < 0.05:
-        return True
-    
-    # Get the observed frequencies for the third digit
-    observed_frequencies, _ = np.histogram(third_digits, bins=np.arange(1, 11))
-
-    # Test if the observed frequencies for the third digit follow the expected frequencies using a chi-square test
-    _, p_value = chisquare(observed_frequencies, expected_frequencies)
-
-    # If the p-value is less than the significance level, assume fraud
-    if p_value < 0.05:
-        return True
-
-    return False
-
-# Set page title
-st.set_page_config(page_title="Fraud Detection App")
-
-# Add title and subtitle
-st.title("Fraud Detection App")
-st.write("This app detects fraud based on the Newcomb-Benford's law applied to the first, second, and third digits of a number in an Excel file.")
-
-# Allow user to upload Excel file
-uploaded_file = st.file_uploader("Choose an Excel file", type=["xlsx", "xls"])
-
-if uploaded_file is not None:
-    # Load the Excel file
-    df = pd.read_excel(uploaded_file)
-
-    # Show the user the available columns in the Excel file
-    available_columns = list(df.columns)
-    column_to_check = st.selectbox("Select a column to check for fraud", available_columns)
-    
-    if st.button("Run"):
-        # Show a message while the fraud detection is running
-        with st.spinner("Detecting fraud..."):
-            # Apply the check_fraud function to the selected column
-            fraud_mask = np.apply_along_axis(check_fraud, axis=0, arr=df[column_to_check].values)
-
-        # Show the user the results of the fraud detection
-        st.write("Fraud detected in the following rows:")
-        st.write(df[fraud_mask])
+# Set up the Streamlit app
+st.title("Newcomb-Benford Law Fraud Detection")
+st.write("Upload an Excel file and select a column to check for fraud on the first, second, and third digits.")
+file = st.file_uploader("Choose a file")
+if file is not None:
+    df = pd.read_excel(file, engine="openpyxl")
+    column_names = df.columns.tolist()
+    column_to_check = st.selectbox("Select a column to check for fraud", column_names)
+    if st.button("Check for fraud"):
+        values_to_check = df[column_to_check].values
+        is_fraudulent = check_fraud(values_to_check)
+        if is_fraudulent:
+            st.write(f"Fraud detected in column {column_to_check}!")
+        else:
+            st.write(f"No fraud detected in column {column_to_check}.")
