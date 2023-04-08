@@ -2,15 +2,31 @@ import pandas as pd
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
+
 def calculate_expected_frequencies(df, column_name, digit_position):
     data = df[column_name]
     # Get the digit at the specified position for each value
     digits = data.apply(lambda x: str(x)[digit_position-1] if len(str(x)) >= digit_position else np.nan)
     digits = digits.dropna().astype(int)
-    # Calculate the expected frequency for each digit
-    expected_freq = np.log10(1 + 1/np.arange(1, 10))
-    expected_freq = np.round(expected_freq / np.sum(expected_freq), 4)
-    expected_freq_dict = dict(zip(range(1, 10), expected_freq))
+    # Calculate the expected frequency for each digit based on the position
+    if digit_position == 1:
+        expected_freq = np.log10(1 + 1/np.arange(1, 10))
+    elif digit_position == 2:
+        expected_freq = np.log10(1 + 1/np.arange(10, 100))
+        expected_freq = np.round(expected_freq / np.sum(expected_freq), 4)
+        expected_freq_dict = dict(zip(range(10, 100), expected_freq))
+        # Convert the dictionary to a dataframe and rename the index column
+        freq_df = pd.DataFrame.from_dict(expected_freq_dict, orient='index', columns=['Expected Frequency'])
+        freq_df.index.name = 'Digit'
+        return freq_df
+    elif digit_position == 3:
+        expected_freq = np.log10(1 + 1/np.arange(100, 1000))
+        expected_freq = np.round(expected_freq / np.sum(expected_freq), 4)
+        expected_freq_dict = dict(zip(range(100, 1000), expected_freq))
+        # Convert the dictionary to a dataframe and rename the index column
+        freq_df = pd.DataFrame.from_dict(expected_freq_dict, orient='index', columns=['Expected Frequency'])
+        freq_df.index.name = 'Digit'
+        return freq_df
     # Calculate the actual frequency for each digit
     actual_freq_dict = dict(digits.value_counts(normalize=True))
     # Merge the expected and actual frequencies into a single dataframe
@@ -29,7 +45,7 @@ if uploaded_file is not None:
     df = pd.read_excel(uploaded_file)
     # Ask the user to select a column and a digit position from the dataframe
     column_name = st.selectbox('Select a column', options=list(df.columns))
-    digit_position = st.selectbox('Select a digit position', options=[1, 2, 3, 4])
+    digit_position = st.selectbox('Select a digit position', options=[1, 2, 3])
     # Calculate the expected and actual frequencies for the specified digit position
     freq_df = calculate_expected_frequencies(df, column_name, digit_position)
     # Plot a bar chart comparing the expected and actual frequencies
