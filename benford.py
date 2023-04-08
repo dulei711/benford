@@ -50,6 +50,7 @@ st.title('Fraud Detection with Newcomb Benford\'s Law')
 # Add a file uploader to the app
 file = st.file_uploader('Upload an Excel file', type=['xlsx'])
 
-# Analyze the Excel file if a file has been uploaded
-if file is not None:
-    analyze_excel_file(file)
+if st.button("Run"):
+    # Analyze the Excel file if a file has been uploaded
+    if file is not None:
+        analyze_excel_file(file)
