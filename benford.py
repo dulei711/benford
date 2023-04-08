@@ -53,7 +53,7 @@ if file is not None:
     st.write("Sample data:")
     st.write(df.head())
     column_data = st.selectbox('Select the column to evaluate fraud!', df.columns)
-    if column_data:
+    if st.butto("Run"):
         # Analyze data with Benford's Law
         digit_counts, expected_counts, chi_squared, p_value = benfords_law(column_data)
 
