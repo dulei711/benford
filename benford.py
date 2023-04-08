@@ -62,12 +62,13 @@ if uploaded_file is not None:
     # Show the user the available columns in the Excel file
     available_columns = list(df.columns)
     column_to_check = st.selectbox("Select a column to check for fraud", available_columns)
+    
+    if st.button(Run"):
+        # Show a message while the fraud detection is running
+        with st.spinner("Detecting fraud..."):
+            # Apply the check_fraud function to the selected column
+            fraud_mask = df[column_to_check].apply(lambda x: check_fraud(x))
 
-    # Show a message while the fraud detection is running
-    with st.spinner("Detecting fraud..."):
-        # Apply the check_fraud function to the selected column
-        fraud_mask = df[column_to_check].apply(lambda x: check_fraud(x))
-        
-    # Show the user the results of the fraud detection
-    st.write("Fraud detected in the following rows:")
-    st.write(df[fraud_mask])
+        # Show the user the results of the fraud detection
+        st.write("Fraud detected in the following rows:")
+        st.write(df[fraud_mask])
