@@ -53,45 +53,45 @@ if file is not None:
     st.write("Sample data:")
     st.write(df.head())
     column_data = st.selectbox('Select the column to evaluate fraud!', df.columns)
+    if column_data:
+        # Analyze data with Benford's Law
+        digit_counts, expected_counts, chi_squared, p_value = benfords_law(column_data)
 
-    # Analyze data with Benford's Law
-    digit_counts, expected_counts, chi_squared, p_value = benfords_law(column_data)
+        # Display results
+        st.write('First Digit Counts:')
+        st.write(digit_counts[0])
 
-    # Display results
-    st.write('First Digit Counts:')
-    st.write(digit_counts[0])
+        st.write('First Digit Expected Counts:')
+        st.write(expected_counts[0])
 
-    st.write('First Digit Expected Counts:')
-    st.write(expected_counts[0])
+        st.write('Second Digit Counts:')
+        st.write(digit_counts[1])
 
-    st.write('Second Digit Counts:')
-    st.write(digit_counts[1])
+        st.write('Second Digit Expected Counts:')
+        st.write(expected_counts[1])
 
-    st.write('Second Digit Expected Counts:')
-    st.write(expected_counts[1])
+        st.write('Third Digit Counts:')
+        st.write(digit_counts[2])
 
-    st.write('Third Digit Counts:')
-    st.write(digit_counts[2])
+        st.write('Third Digit Expected Counts:')
+        st.write(expected_counts[2])
 
-    st.write('Third Digit Expected Counts:')
-    st.write(expected_counts[2])
+        st.write('Chi-Squared:')
+        st.write(chi_squared)
 
-    st.write('Chi-Squared:')
-    st.write(chi_squared)
+        st.write('P-Value:')
+        st.write(p_value)
 
-    st.write('P-Value:')
-    st.write(p_value)
+        # Plot results
+        fig, axs = plt.subplots(1, 3, figsize=(10, 4))
+        for i, ax in enumerate(axs):
+            ax.bar(range(1, 10), digit_counts[i], label='Observed', color='C0')
+            ax.plot(range(1, 10), expected_counts[i], label='Expected', color='C1', marker='o')
+            ax.set_xlabel(f'{["First", "Second", "Third"][i]} Digit')
+            ax.set_ylabel('Frequency')
+            ax.set_title(f'Benford\'s Law Analysis ({["First", "Second", "Third"][i]} Digit)')
+            ax.legend()
 
-    # Plot results
-    fig, axs = plt.subplots(1, 3, figsize=(10, 4))
-    for i, ax in enumerate(axs):
-        ax.bar(range(1, 10), digit_counts[i], label='Observed', color='C0')
-        ax.plot(range(1, 10), expected_counts[i], label='Expected', color='C1', marker='o')
-        ax.set_xlabel(f'{["First", "Second", "Third"][i]} Digit')
-        ax.set_ylabel('Frequency')
-        ax.set_title(f'Benford\'s Law Analysis ({["First", "Second", "Third"][i]} Digit)')
-        ax.legend()
-
-    st.pyplot(fig)
+        st.pyplot(fig)
 else:
     st.write("No File uploaded")
