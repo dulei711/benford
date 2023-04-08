@@ -39,7 +39,7 @@ if uploaded_file is not None:
     df = pd.read_csv(uploaded_file) if uploaded_file.type == "text/csv" else pd.read_excel(uploaded_file, engine="openpyxl")
     st.sidebar.write("Dataset Summary:")
     st.sidebar.write(df.describe())
-    df_column = st.selectbox('Select the Column to evaluate:', df.columns)
+    df_column = st.sidebar.selectbox('Select the Column to evaluate:', df.columns)
     
     # Analyze the first digit
     st.sidebar.title("First Digit Analysis")
