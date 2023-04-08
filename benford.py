@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.stats import chisquare
-import python-math as math
+import math
 
 def first_digit(x):
     return int(str(x)[0])
