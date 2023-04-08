@@ -14,21 +14,19 @@ def read_file(file):
 
 @st.cache
 def get_digit_frequency(data, position):
-    if position == 'first':
+    if position == 1:
         expected_freq_dict = OrderedDict([(d, math.log10(1 + 1 / d)) for d in range(1, 10)])
-    elif position == 'second':
+    elif position == 2:
         expected_freq_dict = OrderedDict([(d, round(math.log10(1 + 1 / (10 * x + d)), 4)) for x in range(1, 10) for d in range(10)])
-    elif position == 'third':
+    elif position == 3:
         expected_freq_dict = OrderedDict([(d, round(math.log10(1 + 1 / (100 * x + 10 * y + d)), 4)) for x in range(1, 10) for y in range(10) for d in range(10)])
     data = data.apply(lambda x: str(x))
-    if data.str[position].str.isnumeric().any():
-        actual_freq = data.str[position][data.str[position].str.isnumeric()].astype(int).value_counts(normalize=True).sort_index().values
+    if data.str[position - 1].str.isnumeric().any():
+        actual_freq = data.str[position - 1][data.str[position - 1].str.isnumeric()].astype(int).value_counts(normalize=True).sort_index().values
     else:
         actual_freq = []
     expected_freq = [expected_freq_dict[d] for d in range(0, 10)]
     return actual_freq, expected_freq
-
-
 
 st.set_page_config(page_title="Newcomb-Benford's Law Anomaly Detection",
                    page_icon=":guardsman:",
@@ -49,7 +47,7 @@ if uploaded_file is not None:
 
     # first digit analysis
     st.write('## First Digit Analysis')
-    actual_freq, expected_freq = get_digit_frequency(df[[column]], 'first')
+    actual_freq, expected_freq = get_digit_frequency(df[[column]], 1)
 
     fig, ax = plt.subplots()
     sns.barplot(x=list(range(1, 10)), y=actual_freq)
@@ -59,7 +57,7 @@ if uploaded_file is not None:
 
     # second digit analysis
     st.write('## Second Digit Analysis')
-    actual_freq, expected_freq = get_digit_frequency(df[[column]], 'second')
+    actual_freq, expected_freq = get_digit_frequency(df[[column]], 2)
 
     fig, ax = plt.subplots()
     sns.barplot(x=list(range(0, 10)), y=actual_freq)
@@ -69,7 +67,7 @@ if uploaded_file is not None:
 
     # third digit analysis
     st.write('## Third Digit Analysis')
-    actual_freq, expected_freq = get_digit_frequency(df[[column]], 'third')
+    actual_freq, expected_freq = get_digit_frequency(df[[column]], 3)
 
     fig, ax = plt.subplots()
     sns.barplot(x=list(range(0, 10)), y=actual_freq)
