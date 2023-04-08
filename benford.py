@@ -34,7 +34,7 @@ st.title("Fraud Detection with Benford's Law")
 
 uploaded_file = st.file_uploader("Choose a file")
 if uploaded_file is not None:
-    data = pd.read_csv(uploaded_file)
+    data = pd.read_excel(uploaded_file)
     st.write("Sample data:")
     st.write(data.head())
     column_data = st.selectbox('Select the column to evaluate fraud!', data.columns)
