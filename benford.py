@@ -29,7 +29,7 @@ if uploaded_file is not None:
     df = pd.read_excel(uploaded_file)
     # Ask the user to select a column and a digit position from the dataframe
     column_name = st.selectbox('Select a column', options=list(df.columns))
-    digit_position = st.selectbox('Select a digit position', options=[2, 3])
+    digit_position = st.selectbox('Select a digit position', options=[1, 2, 3, 4])
     # Calculate the expected and actual frequencies for the specified digit position
     freq_df = calculate_expected_frequencies(df, column_name, digit_position)
     # Plot a bar chart comparing the expected and actual frequencies
