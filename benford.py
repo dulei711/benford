@@ -22,7 +22,7 @@ def get_digit_frequency(data, position):
     
     # Compute the expected frequency of each digit
     expected_freq_dict = {d: 1 - (1 / (d + 1)) for d in range(1, 10)}
-    expected_freq_dict[0] = 1 - sum(expected_freq_dict.values())
+    expected_freq_dict[0] = (1 - sum(expected_freq_dict.values()))*100
     
     # Convert the frequency dictionaries to lists
     actual_freq = [freq_dict.get(d, 0) for d in range(0, 10)]
