@@ -5,3 +5,5 @@ matplotlib
 openpyxl
 python-math
 scipy
+streamlit_pandas_profiling
+newcomb_benford
