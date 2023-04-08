@@ -38,10 +38,11 @@ def get_digit_frequency(data, position):
 def plot_frequency_comparison(column, position):
     actual_freq, expected_freq = get_digit_frequency(df[column], position)
     fig, ax = plt.subplots(figsize=(8, 6))
-    sns.barplot(x=list(range(0, 10)), y=actual_freq/sum(actual_freq), ax=ax)
-    sns.lineplot(x=list(range(0, 10)), y=expected_freq/sum(expected_freq), ax=ax)
-    ax.set(title=f'Newcomb-Benford Law for Column "{column}" at Digit Position {position}', ylabel="Frequency (normalized)")
-    
+    sns.barplot(x=list(range(0, 10)), y=actual_freq, ax=ax)
+    sns.lineplot(x=list(range(0, 10)), y=expected_freq, ax=ax)
+    max_freq = max(max(actual_freq), max(expected_freq))
+    ax.set(title=f'Newcomb-Benford Law for Column "{column}" at Digit Position {position}',
+           ylim=(0, max_freq))
     # Show the plot
     st.pyplot(fig)
 
