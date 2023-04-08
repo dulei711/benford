@@ -20,10 +20,14 @@ def get_digit_frequency(data, position):
         expected_freq_dict = OrderedDict([(d, round(math.log10(1 + 1 / (10 * x + d)), 4)) for x in range(1, 10) for d in range(10)])
     elif position == 'third':
         expected_freq_dict = OrderedDict([(d, round(math.log10(1 + 1 / (100 * x + 10 * y + d)), 4)) for x in range(1, 10) for y in range(10) for d in range(10)])
-    data = data.astype(str).str[position]
-    actual_freq = data[data.str.isnumeric()].astype(int).value_counts(normalize=True).sort_index().values
+    data = data.apply(lambda x: str(x))
+    if data.str[position].str.isnumeric().any():
+        actual_freq = data.str[position][data.str[position].str.isnumeric()].astype(int).value_counts(normalize=True).sort_index().values
+    else:
+        actual_freq = []
     expected_freq = [expected_freq_dict[d] for d in range(0, 10)]
     return actual_freq, expected_freq
+
 
 st.set_page_config(page_title="Newcomb-Benford's Law Anomaly Detection",
                    page_icon=":guardsman:",
