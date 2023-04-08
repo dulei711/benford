@@ -36,11 +36,24 @@ def get_digit_frequency(data, position):
 
 def plot_frequency_comparison(column, position):
     actual_freq, expected_freq = get_digit_frequency(df[column], position)
-    fig, ax = plt.subplots(figsize=(8, 6))
-    sns.barplot(x=list(range(0, 10)), y=actual_freq, ax=ax)
-    sns.lineplot(x=list(range(0, 10)), y=expected_freq, ax=ax)
+    fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(12, 6))
+    
+    # Plot actual frequency
+    sns.barplot(x=list(range(0, 10)), y=actual_freq, ax=ax1)
+    ax1.set(title=f'Actual Frequency for Column "{column}" at Digit Position {position}',
+            xlabel='Digit', ylabel='Frequency')
+    
+    # Plot expected frequency
+    sns.lineplot(x=list(range(0, 10)), y=expected_freq, ax=ax2)
+    ax2.set(title=f'Expected Frequency for Column "{column}" at Digit Position {position}',
+            xlabel='Digit', ylabel='Frequency')
+    
+    # Set y-axis limit to be the maximum frequency value between actual and expected
     max_freq = max(max(actual_freq), max(expected_freq))
-    ax.set(title=f'Newcomb-Benford Law for Column "{column}" at Digit Position {position}', ylim=(0, max_freq))
+    ax1.set_ylim(0, max_freq)
+    ax2.set_ylim(0, max_freq)
+    
+    # Show the plot
     st.pyplot(fig)
 
 st.set_page_config(page_title="Newcomb-Benford Law Anomaly Detection")
