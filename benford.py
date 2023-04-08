@@ -63,7 +63,7 @@ uploaded_file = st.sidebar.file_uploader('Choose an Excel file', type=['xlsx'])
 
 if uploaded_file is not None:
     df = pd.read_excel(uploaded_file)
-    column = df[df.columns[0]]
+    column = st.selectbox("Select Column",df.columns)
 
     st.write('**Data sample:**')
     st.write(column.head())
