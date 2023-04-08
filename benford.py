@@ -1,97 +1,74 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-from scipy.stats import chi2
-import matplotlib.pyplot as plt
+from scipy.stats import chisquare
 
-def benfords_law(data):
-    # Calculate the frequency distribution of the first, second, and third digits
-    first_digits = data.apply(lambda x: int(str(x)[0]))
-    second_digits = data.apply(lambda x: int(str(x)[1]) if len(str(x)) >= 2 else 0)
-    third_digits = data.apply(lambda x: int(str(x)[2]) if len(str(x)) >= 3 else 0)
-    
-    digit_counts = [first_digits.value_counts().sort_index(), 
-                    second_digits.value_counts().sort_index(), 
-                    third_digits.value_counts().sort_index()]
-    
-    digit_counts = [counts / counts.sum() for counts in digit_counts]
+# Define a function to calculate the first digit of a number
+def first_digit(n):
+    return int(str(n)[0])
 
-    # Calculate the expected frequency distribution according to Benford's Law
+# Define a function to calculate the second digit of a number
+def second_digit(n):
+    return int(str(n)[1])
+
+# Define a function to calculate the third digit of a number
+def third_digit(n):
+    return int(str(n)[2])
+
+# Define a function to apply the Newcomb-Benford Law to a series of numbers
+def apply_newcomb_benford_law(data, digit):
+    # Calculate the frequency of each digit
+    digit_counts = data.apply(digit).value_counts(normalize=True)
+    # Calculate the expected frequency based on Newcomb-Benford Law
     expected_counts = np.log10(1 + 1 / np.arange(1, 10))
-    expected_counts /= expected_counts.sum()
-    expected_counts = [np.tile(expected_counts, (9, 1)).T ** (i - 1) for i in range(1, 4)]
-    expected_counts = [counts / counts.sum() for counts in expected_counts]
+    expected_counts *= data.shape[0]
+    # Calculate the chi-square statistic
+    chi_square = chisquare(digit_counts, expected_counts)
+    # Return the digit frequencies and the chi-square statistic
+    return digit_counts, chi_square
 
-    # Calculate the difference between the observed and expected frequency distributions
-    chi_squared = sum(((counts - expected_counts[i]) ** 2 / expected_counts[i]).sum() for i, counts in enumerate(digit_counts))
-    p_value = 1 - chi2.cdf(chi_squared, 24)
+# Define the Streamlit app
+st.set_page_config(page_title="Newcomb Benford's Law Fraud Detection", page_icon=":guardsman:", layout="wide")
+st.title("Newcomb Benford's Law Fraud Detection")
+st.write("This app analyzes fraud using Newcomb Benford's Law on the first, second, and third digits of numbers in a dataset.")
 
-    return digit_counts, expected_counts, chi_squared, p_value
+# Upload a dataset
+st.sidebar.title("Upload a Dataset")
+uploaded_file = st.sidebar.file_uploader(label="Choose a CSV or Excel file", type=["csv", "xlsx"])
+if uploaded_file is not None:
+    df = pd.read_csv(uploaded_file) if uploaded_file.type == "text/csv" else pd.read_excel(uploaded_file, engine="openpyxl")
+    st.sidebar.write("Dataset Summary:")
+    st.sidebar.write(df.describe())
 
-st.set_page_config(page_title="Fraud Detection with Benford's Law", page_icon=":guardsman:")
+    # Analyze the first digit
+    st.sidebar.title("First Digit Analysis")
+    first_digit_counts, first_digit_chi_square = apply_newcomb_benford_law(df["Amount"], first_digit)
+    st.sidebar.write("First Digit Counts:")
+    st.sidebar.write(first_digit_counts)
+    st.sidebar.write("Chi-Square Statistic:")
+    st.sidebar.write(first_digit_chi_square.statistic)
 
-st.title("Fraud Detection with Benford's Law")
+    # Analyze the second digit
+    st.sidebar.title("Second Digit Analysis")
+    second_digit_counts, second_digit_chi_square = apply_newcomb_benford_law(df["Amount"], second_digit)
+    st.sidebar.write("Second Digit Counts:")
+    st.sidebar.write(second_digit_counts)
+    st.sidebar.write("Chi-Square Statistic:")
+    st.sidebar.write(second_digit_chi_square.statistic)
 
-# Creating a file uploader widget
-file = st.file_uploader("Upload file", type=['csv', 'xls', 'xlsx', 'txt'])
+    # Analyze the third digit
+    st.sidebar.title("Third Digit Analysis")
+    third_digit_counts, third_digit_chi_square = apply_newcomb_benford_law(df["Amount"], third_digit)
+    st.sidebar.write("Third Digit Counts:")
+    st.sidebar.write(third_digit_counts)
+    st.sidebar.write("Chi-Square Statistic:")
+    st.sidebar.write(third_digit_chi_square.statistic)
 
-# Checking if a file is uploaded or not
-if file is not None:
-    # If the file is a CSV
-    if file.type == 'text/csv':
-        df = pd.read_csv(file)
-    # If the file is an Excel spreadsheet
-    elif file.type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-        df = pd.read_excel(file)
-    # If the file is a TXT file
-    elif file.type == 'text/plain':
-        df = pd.read_csv(file, sep='\t', header=None)
-    # For all other file types
-    else:
-        st.write("File type not supported")
-    
-    st.write("Sample data:")
-    st.write(df.head())
-    column_data = str(st.selectbox('Select the column to evaluate fraud!', df.columns))
-    if st.button("Run"):
-        # Analyze data with Benford's Law
-        benfords_law(column_data)
-
-        # Display results
-        st.write('First Digit Counts:')
-        st.write(digit_counts[0])
-
-        st.write('First Digit Expected Counts:')
-        st.write(expected_counts[0])
-
-        st.write('Second Digit Counts:')
-        st.write(digit_counts[1])
-
-        st.write('Second Digit Expected Counts:')
-        st.write(expected_counts[1])
-
-        st.write('Third Digit Counts:')
-        st.write(digit_counts[2])
-
-        st.write('Third Digit Expected Counts:')
-        st.write(expected_counts[2])
-
-        st.write('Chi-Squared:')
-        st.write(chi_squared)
-
-        st.write('P-Value:')
-        st.write(p_value)
-
-        # Plot results
-        fig, axs = plt.subplots(1, 3, figsize=(10, 4))
-        for i, ax in enumerate(axs):
-            ax.bar(range(1, 10), digit_counts[i], label='Observed', color='C0')
-            ax.plot(range(1, 10), expected_counts[i], label='Expected', color='C1', marker='o')
-            ax.set_xlabel(f'{["First", "Second", "Third"][i]} Digit')
-            ax.set_ylabel('Frequency')
-            ax.set_title(f'Benford\'s Law Analysis ({["First", "Second", "Third"][i]} Digit)')
-            ax.legend()
-
-        st.pyplot(fig)
-else:
-    st.write("No File uploaded")
+    # Display the dataset and digit frequencies
+    st.write("Dataset:")
+    st.write(df)
+    st.write("Digit Frequencies:")
+    st.write(pd.DataFrame({
+        "First Digit": first_digit_counts,
+        "Second Digit": second_digit_counts,
+        "Third Digit": third_digit_counts
