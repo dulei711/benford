@@ -42,6 +42,21 @@ def load_data(file):
     ax.set_ylabel('Frequency')
     st.pyplot(fig)
 
+    
+import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Function to calculate the frequency of each digit from 0 to 9
+def calc_freq(data):
+    freqs = []
+    for i in range(10):
+        freq = len(data[data.astype(str).str.startswith(str(i))])/len(data)
+        freqs.append(freq)
+    return freqs
+
+# Define the Streamlit app
 # Add a title to the app
 st.title("Newcomb-Benford's Law Fraud Detection")
 
@@ -51,15 +66,17 @@ if file is not None:
     df = pd.read_excel(file)
     column = st.selectbox("Select a column to analyze", df.columns.tolist())
 
-    # Calculate the frequencies of the first, second, and third digits using Newcomb-Benford's Law
-    freq_1, freq_2, freq_3 = calc_freq(df[column])
+    # Calculate the frequencies of each digit from 0 to 9 using Newcomb-Benford's Law
+    freqs = calc_freq(df[column])
 
-    # Create a bar chart to compare the frequencies with the expected ones
-    fig, ax = plt.subplots()
-    ax.bar([1, 2, 3], [freq_1, freq_2, freq_3], label="Observed")
-    ax.plot([1, 2, 3], [0.301, 0.176, 0.125], 'r-', label="Expected")
-    ax.set_xlabel("Digit")
-    ax.set_ylabel("Frequency")
-    ax.set_title("Newcomb-Benford's Law Frequencies")
-    ax.legend()
-    st.pyplot(fig)
+    # Create a bar chart for each digit to compare the observed frequencies with the expected ones
+    for i in range(10):
+        fig, ax = plt.subplots()
+        ax.bar([0, 1], [freqs[i], 0.1], label=["Observed", "Expected"])
+        ax.set_xlabel("Frequency")
+        ax.set_ylabel("Digit " + str(i))
+        ax.set_title("Newcomb-Benford's Law Frequencies")
+        ax.set_xticks([0, 1])
+        ax.set_xticklabels(["Observed", "Expected"])
+        ax.set_ylim([0, 0.5])
+        st.pyplot(fig)
