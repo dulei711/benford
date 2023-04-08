@@ -35,7 +35,8 @@ def plot_frequency_comparison(column, position):
     fig, ax = plt.subplots(figsize=(8, 6))
     sns.barplot(x=list(range(0, 10)), y=actual_freq, ax=ax)
     sns.lineplot(x=list(range(0, 10)), y=expected_freq, ax=ax)
-    ax.set(title=f'Newcomb-Benford Law for Column "{column}" at Digit Position {position}')
+    max_freq = max(max(actual_freq), max(expected_freq))
+    ax.set(title=f'Newcomb-Benford Law for Column "{column}" at Digit Position {position}', ylim=(0, max_freq))
     st.pyplot(fig)
 
 st.set_page_config(page_title="Newcomb-Benford Law Anomaly Detection")
