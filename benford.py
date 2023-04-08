@@ -1,58 +1,53 @@
 import streamlit as st
 import pandas as pd
+import openpyxl
 import numpy as np
 import matplotlib.pyplot as plt
-from math import log10, floor
 
-def first_digit(num):
-    return int(str(num)[0])
+def newcomb_benford(column):
+    # Calculate the first, second, and third digits of the column
+    first_digit = abs(column)//10**(int(np.log10(abs(column))))
+    second_digit = abs(column)//10**(int(np.log10(abs(column)))-1)%10
+    third_digit = abs(column)//10**(int(np.log10(abs(column)))-2)%10
+    
+    # Calculate the expected frequencies based on Newcomb Benford's law
+    first_freq = np.log10(1 + 1/first_digit)
+    second_freq = np.log10(1 + 1/(10*first_digit + second_digit))
+    third_freq = np.log10(1 + 1/(100*first_digit + 10*second_digit + third_digit))
+    
+    return [first_freq, second_freq, third_freq]
 
-def second_digit(num):
-    return int(str(num)[1])
-
-def third_digit(num):
-    return int(str(num)[2])
-
-def get_first_digits(data):
-    return data.apply(first_digit)
-
-def get_second_digits(data):
-    return data.apply(second_digit)
-
-def get_third_digits(data):
-    return data.apply(third_digit)
-
-def get_newcomb_benford_law(digit):
-    return np.array([log10(1 + 1/d) for d in range(1, 10)]).cumsum() + log10(1/2)
-
-def plot_newcomb_benford_law(data, digit):
-    digits = [get_first_digits, get_second_digits, get_third_digits]
-    titles = ["First Digit", "Second Digit", "Third Digit"]
-    db = digits[digit](data)
-    counts = db.value_counts(normalize=True).sort_index()
-    expected_counts = get_newcomb_benford_law(digit)
+def analyze_excel_file(file):
+    # Read the Excel file into a pandas DataFrame
+    df = pd.read_excel(file, engine='openpyxl')
+    
+    # Get the column to analyze
+    col = st.selectbox('Select a column to analyze:', df.columns)
+    
+    # Calculate the observed and expected frequencies for the first, second, and third digits of the column
+    obs_freq = df[col].apply(lambda x: newcomb_benford(x)).sum()
+    exp_freq = np.log10(np.arange(1, 10)).repeat(3)
+    
+    # Create a bar chart to compare the observed and expected frequencies
     fig, ax = plt.subplots()
-    ax.bar(counts.index, counts.values, label="Actual")
-    ax.plot(range(1, 10), 10**expected_counts, "o-", label="Expected")
-    ax.set_xticks(range(1, 10))
-    ax.set_xticklabels(range(1, 10))
-    ax.set_title(f"{titles[digit]} Distribution")
-    ax.set_xlabel("Digit")
-    ax.set_ylabel("Frequency")
+    ax.bar(np.arange(1, 10)-0.2, obs_freq, width=0.4, color='orange', label='Observed')
+    ax.bar(np.arange(1, 10)+0.2, exp_freq, width=0.4, color='blue', label='Expected')
+    ax.set_xlabel('Digit')
+    ax.set_ylabel('Frequency (log10)')
+    ax.set_title('Newcomb Benford\'s Law Analysis')
     ax.legend()
+    
+    # Show the chart in the Streamlit app
     st.pyplot(fig)
 
-st.title("Newcomb-Benford's Law for Fraud Detection")
-st.write("This app analyzes an Excel file column using Newcomb-Benford's Law to detect fraud and displays an awesome chart of the analysis.")
-st.write("Upload an Excel file:")
-uploaded_file = st.file_uploader("", type=["xlsx"])
-if uploaded_file is not None:
-    data = pd.read_excel(uploaded_file)
-    column = st.selectbox("Select a column:", data.columns)
-    digit = st.selectbox("Select a digit:", ["First Digit", "Second Digit", "Third Digit"])
-    if digit == "First Digit":
-        plot_newcomb_benford_law(data[column], 0)
-    elif digit == "Second Digit":
-        plot_newcomb_benford_law(data[column], 1)
-    elif digit == "Third Digit":
-        plot_newcomb_benford_law(data[column], 2)
+st.set_page_config(page_title='Fraud Detection with Newcomb Benford\'s Law')
+
+# Add a title to the app
+st.title('Fraud Detection with Newcomb Benford\'s Law')
+
+# Add a file uploader to the app
+file = st.file_uploader('Upload an Excel file', type=['xlsx'])
+
+# Analyze the Excel file if a file has been uploaded
+if file is not None:
+    analyze_excel_file(file)
