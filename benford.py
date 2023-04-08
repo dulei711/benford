@@ -29,6 +29,9 @@ def get_digit_frequency(data, position):
     expected_freq = [expected_freq_dict[d] for d in range(1, 10)]
     return actual_freq, expected_freq
 
+def get_expected_frequency_dict(position):
+    expected_freq_dict = {d: get_digit_frequency_for_position(d, position) for d in range(1, 10)}
+    return expected_freq_dict
 
 st.set_page_config(page_title="Newcomb-Benford's Law Anomaly Detection",
                    page_icon=":guardsman:",
