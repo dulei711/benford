@@ -1,7 +1,8 @@
-import pandas as pd
 import streamlit as st
+import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.stats import chisquare
 
 def calculate_expected_frequencies(df, column_name, digit_position):
     data = df[column_name]
@@ -30,23 +31,50 @@ def calculate_expected_frequencies(df, column_name, digit_position):
                              on='Digit')
     return freq_df
 
-st.title('Newcomb Benford\'s Law Anomaly Detection')
-
-# Ask the user to upload an excel file
-uploaded_file = st.file_uploader('Upload an Excel file', type=['xlsx', 'xls'])
-
-if uploaded_file is not None:
-    # Read the data from the uploaded file into a pandas dataframe
-    df = pd.read_excel(uploaded_file)
-    # Ask the user to select a column and a digit position from the dataframe
-    column_name = st.selectbox('Select a column', options=list(df.columns))
-    digit_position = st.selectbox('Select a digit position', options=[1, 2, 3])
-    # Calculate the expected and actual frequencies for the specified digit position
-    freq_df = calculate_expected_frequencies(df, column_name, digit_position)
-    # Plot a bar chart comparing the expected and actual frequencies
+def plot_frequencies(df):
     fig, ax = plt.subplots()
-    freq_df.plot(x='Digit', y=['Expected Frequency', 'Actual Frequency'], kind='bar', ax=ax)
-    ax.set_xlabel(f'{digit_position}nd/rd Digit')
+    ax.bar(df.index, df['Actual Frequency'], label='Actual')
+    ax.plot(df.index, df['Expected Frequency'], color='red', label='Expected')
+    ax.legend()
+    ax.set_xlabel('Digit')
     ax.set_ylabel('Frequency')
-    ax.set_title(f'Newcomb Benford\'s Law for {column_name} ({digit_position}nd/rd Digit)')
+    ax.set_title('Newcomb-Benford Law')
     st.pyplot(fig)
+
+# Upload a file and get the column name
+uploaded_file = st.file_uploader('Upload a file', type=['xlsx'])
+if uploaded_file is not None:
+    df = pd.read_excel(uploaded_file)
+    st.write('### Data Preview')
+    st.write(df.head())
+    column_name = st.selectbox('Select a column', options=df.columns)
+    st.write(f'### Column: {column_name}')
+
+    # Calculate the expected and actual frequencies for the first, second, and third digits
+    st.write('### First Digit Analysis')
+    first_digit_df = calculate_expected_frequencies(df, column_name, 1)
+    st.write(first_digit_df)
+    plot_frequencies(first_digit_df)
+
+    st.write('### Second Digit Analysis')
+    second_digit_df = calculate_expected_frequencies(df, column_name, 2)
+    st.write(second_digit_df)
+    plot_frequencies(second_digit_df)
+
+    st.write('### Third Digit Analysis')
+    third_digit_df = calculate_expected_frequencies(df, column_name, 3)
+    st.write(third_digit_df)
+    plot_frequencies(third_digit_df)
+
+    # Perform the chi-square test on the first digit analysis
+    st.write('### Chi-Square Test')
+    st.write('Null Hypothesis: The observed and expected frequencies are not significantly different.')
+    st.write('Alternative Hypothesis: The observed and expected frequencies are significantly different.')
+    alpha = st.number_input('Significance level (alpha)', value=0.05, step=0.01, format='%g')
+    chi2, p = chisquare(first_digit_df['Actual Frequency'], f_exp=first_digit_df['Expected Frequency'])
+    st.write(f'Chi-square statistic: {chi2:.4f}')
+    st.write(f'p-value: {p:.4f}')
+    if p < alpha:
+        st.write('Reject the null hypothesis.')
+    else:
+        st.write('Fail to reject the null hypothesis.')
