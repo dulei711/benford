@@ -17,6 +17,7 @@ def third_digit(n):
 
 # Define a function to apply the Newcomb-Benford Law to a series of numbers
 def apply_newcomb_benford_law(data, digit):
+    data = pd.Series(data)
     # Calculate the frequency of each digit
     digit_counts = data.apply(digit).value_counts(normalize=True)
     # Calculate the expected frequency based on Newcomb-Benford Law
