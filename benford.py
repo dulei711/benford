@@ -29,7 +29,6 @@ def analyze_excel_file(file):
     exp_freq = np.log10(np.arange(1, 10)).repeat(3)
     
     # Create a bar chart to compare the observed and expected frequencies
-    '''
     fig, ax = plt.subplots()
     ax.bar(np.arange(1, 10)-0.2, obs_freq, width=0.4, color='orange', label='Observed')
     ax.bar(np.arange(1, 10)+0.2, exp_freq, width=0.4, color='blue', label='Expected')
@@ -40,7 +39,7 @@ def analyze_excel_file(file):
     
     # Show the chart in the Streamlit app
     st.pyplot(fig)
-    '''
+
 
 st.set_page_config(page_title='Fraud Detection with Newcomb Benford\'s Law')
 
@@ -50,7 +49,7 @@ st.title('Fraud Detection with Newcomb Benford\'s Law')
 # Add a file uploader to the app
 file = st.file_uploader('Upload an Excel file', type=['xlsx'])
 
-if st.button("Run"):
-    # Analyze the Excel file if a file has been uploaded
-    if file is not None:
-        analyze_excel_file(file)
+
+# Analyze the Excel file if a file has been uploaded
+if file is not None:
+    analyze_excel_file(file)
