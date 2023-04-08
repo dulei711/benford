@@ -49,8 +49,7 @@ if file is not None:
     # For all other file types
     else:
         st.write("File type not supported")
-
-if uploaded_file is not None:
+    
     st.write("Sample data:")
     st.write(df.head())
     column_data = st.selectbox('Select the column to evaluate fraud!', df.columns)
@@ -94,3 +93,5 @@ if uploaded_file is not None:
         ax.legend()
 
     st.pyplot(fig)
+else:
+    st.write("No File uploaded")
