@@ -63,7 +63,7 @@ if uploaded_file is not None:
     available_columns = list(df.columns)
     column_to_check = st.selectbox("Select a column to check for fraud", available_columns)
     
-    if st.button(Run"):
+    if st.button("Run"):
         # Show a message while the fraud detection is running
         with st.spinner("Detecting fraud..."):
             # Apply the check_fraud function to the selected column
