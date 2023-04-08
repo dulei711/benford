@@ -1,81 +1,55 @@
-import streamlit as st
 import pandas as pd
-import numpy as np
-import math
-from collections import OrderedDict
+import streamlit as st
 import seaborn as sns
 import matplotlib.pyplot as plt
+from collections import Counter
 
-
-@st.cache
-def read_file(file):
-    df = pd.read_excel(file, engine='openpyxl')
-    return df
-
-@st.cache
 def get_digit_frequency(data, position):
-    if position == 'first':
-        expected_freq_dict = OrderedDict([(d, math.log10(1 + 1 / d)) for d in range(1, 10)])
-    elif position == 'second':
-        expected_freq_dict = OrderedDict([(d, round(math.log10(1 + 1 / (10 * x + d)), 4)) for x in range(1, 10) for d in range(10)])
-    elif position == 'third':
-        expected_freq_dict = OrderedDict([(d, round(math.log10(1 + 1 / (100 * x + 10 * y + d)), 4)) for x in range(1, 10) for y in range(10) for d in range(10)])
-    data = data.apply(lambda x: str(x))
-    actual_freq = [0] * 9
-    if data.str[position].str.isnumeric().any():
-        actual_counts = data.str[position][data.str[position].str.isnumeric()].astype(int).value_counts(normalize=True).sort_index()
-        for i, count in actual_counts.items():
-            actual_freq[i-1] = count
-    expected_freq = [expected_freq_dict[d] for d in range(1, 10)]
+    # Check if data is a Series, and convert to str if necessary
+    if not isinstance(data, pd.Series):
+        data = pd.Series(data)
+    data = data.astype(str)
+    
+    # Select the specified position of the digit
+    selected_digits = data.str[position - 1]
+    
+    # Filter out non-numeric values and convert to int
+    selected_digits = selected_digits[selected_digits.str.isnumeric()]
+    selected_digits = selected_digits.astype(int)
+    
+    # Count the frequency of each digit
+    freq_dict = dict(Counter(selected_digits))
+    
+    # Compute the expected frequency of each digit
+    expected_freq_dict = {d: 1 - (1 / (d + 1)) for d in range(1, 10)}
+    expected_freq_dict[0] = 1 - sum(expected_freq_dict.values())
+    
+    # Convert the frequency dictionaries to lists
+    actual_freq = [freq_dict.get(d, 0) for d in range(0, 10)]
+    expected_freq = [expected_freq_dict[d] for d in expected_freq_dict.keys()]
+    
     return actual_freq, expected_freq
 
-def get_expected_frequency_dict(position):
-    expected_freq_dict = {d: get_digit_frequency_for_position(d, position) for d in range(1, 10)}
-    return expected_freq_dict
+def plot_frequency_comparison(column, position):
+    actual_freq, expected_freq = get_digit_frequency(df[column], position)
+    fig, ax = plt.subplots(figsize=(8, 6))
+    sns.barplot(x=list(range(0, 10)), y=actual_freq, ax=ax)
+    sns.lineplot(x=list(range(0, 10)), y=expected_freq, ax=ax)
+    ax.set(title=f'Newcomb-Benford Law for Column "{column}" at Digit Position {position}')
 
-st.set_page_config(page_title="Newcomb-Benford's Law Anomaly Detection",
-                   page_icon=":guardsman:",
-                   layout="wide")
+st.set_page_config(page_title="Newcomb-Benford Law Anomaly Detection")
+st.title("Newcomb-Benford Law Anomaly Detection")
 
-st.title("Newcomb-Benford's Law Anomaly Detection")
-
-# upload file
-uploaded_file = st.file_uploader("Upload a file", type=["xlsx", "xls"])
-
+uploaded_file = st.file_uploader("Choose a file to upload")
 if uploaded_file is not None:
-    df = read_file(uploaded_file)
-    st.write(df)
+    df = pd.read_excel(uploaded_file)
 
-    # column selection
-    columns = list(df.columns)
-    column = st.selectbox('Select a column', columns)
-
-    # first digit analysis
-    st.write('## First Digit Analysis')
-    actual_freq, expected_freq = get_digit_frequency(df[column], 1)
-
-    fig, ax = plt.subplots()
-    sns.barplot(x=list(range(1, 10)), y=actual_freq)
-    sns.lineplot(x=list(range(1, 10)), y=expected_freq, color='red', marker='o')
-    ax.set(xlabel='Digit', ylabel='Frequency', title=f'First Digit Analysis ({column})')
-    st.pyplot(fig)
-
-    # second digit analysis
-    st.write('## Second Digit Analysis')
-    actual_freq, expected_freq = get_digit_frequency(df[column], 2)
-
-    fig, ax = plt.subplots()
-    sns.barplot(x=list(range(0, 10)), y=actual_freq)
-    sns.lineplot(x=list(range(0, 10)), y=expected_freq, color='red', marker='o')
-    ax.set(xlabel='Digit', ylabel='Frequency', title=f'Second Digit Analysis ({column})')
-    st.pyplot(fig)
-
-    # third digit analysis
-    st.write('## Third Digit Analysis')
-    actual_freq, expected_freq = get_digit_frequency(df[column], 3)
-
-    fig, ax = plt.subplots()
-    sns.barplot(x=list(range(0, 10)), y=actual_freq)
-    sns.lineplot(x=list(range(0, 10)), y=expected_freq, color='red', marker='o')
-    ax.set(xlabel='Digit', ylabel='Frequency', title=f'Third Digit Analysis ({column})')
-    st.pyplot(fig)
+    # Get the column names and ask user which column to analyze
+    column_names = list(df.columns)
+    column = st.selectbox("Select a column to analyze", column_names)
+    
+    # Ask user which digit position to analyze
+    position = st.slider("Select a digit position to analyze (1 = first digit)", 1, len(str(df[column].max())))
+    
+    # Generate the frequency comparison plot
+    plot_frequency_comparison(column, position)
