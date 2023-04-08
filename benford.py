@@ -5,18 +5,19 @@ import matplotlib.pyplot as plt
 # Function to calculate the frequency of the first, second, and third digits
 def calc_freq(data):
     # Get the first digit of each number
-    first_digit = data.apply(lambda x: int(str(x)[0]))
+    first_digit = data.apply(lambda x: int(str(x)[0]) if str(x)[0].isdigit() else None)
     # Get the second digit of each number
-    second_digit = data.apply(lambda x: int(str(x)[1]))
+    second_digit = data.apply(lambda x: int(str(x)[1]) if str(x)[1].isdigit() else None)
     # Get the third digit of each number
-    third_digit = data.apply(lambda x: int(str(x)[2]))
+    third_digit = data.apply(lambda x: int(str(x)[2]) if str(x)[2].isdigit() else None)
     
     # Calculate the frequency of each digit
-    freq_1 = len(first_digit[first_digit == 1])/len(first_digit)
-    freq_2 = len(second_digit[second_digit == 2])/len(second_digit)
-    freq_3 = len(third_digit[third_digit == 3])/len(third_digit)
+    freq_1 = len(first_digit[first_digit == 1])/len(first_digit.dropna())
+    freq_2 = len(second_digit[second_digit == 2])/len(second_digit.dropna())
+    freq_3 = len(third_digit[third_digit == 3])/len(third_digit.dropna())
     
     return freq_1, freq_2, freq_3
+
 
 # Function to load the Excel file and apply the frequency calculation function
 def load_data(file):
