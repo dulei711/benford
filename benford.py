@@ -73,3 +73,25 @@ if uploaded_file is not None:
         "First Digit": first_digit_counts,
         "Second Digit": second_digit_counts,
         "Third Digit": third_digit_counts}))
+    
+    import plotly.express as px
+
+    # Add a bar chart of the digit frequencies
+    fig1 = px.bar(pd.DataFrame({
+        "Digit": range(1, 10),
+        "First Digit": first_digit_counts,
+        "Second Digit": second_digit_counts,
+        "Third Digit": third_digit_counts
+    }).melt(id_vars="Digit", var_name="Digit Position", value_name="Frequency"), 
+                 x="Digit", y="Frequency", color="Digit Position", barmode="group", 
+                 title="Digit Frequencies")
+    st.plotly_chart(fig1)
+
+    # Add a pie chart of the chi-square statistics
+    fig2 = px.pie(pd.DataFrame({
+        "Chi-Square Statistic": [first_digit_chi_square.statistic, second_digit_chi_square.statistic, third_digit_chi_square.statistic],
+        "Digit Position": ["First Digit", "Second Digit", "Third Digit"]
+    }), values="Chi-Square Statistic", names="Digit Position", 
+                 title="Chi-Square Statistics")
+    st.plotly_chart(fig2)
+
