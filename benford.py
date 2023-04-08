@@ -29,6 +29,7 @@ def get_digit_frequency(data, position):
     return actual_freq, expected_freq
 
 
+
 st.set_page_config(page_title="Newcomb-Benford's Law Anomaly Detection",
                    page_icon=":guardsman:",
                    layout="wide")
