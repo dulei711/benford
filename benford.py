@@ -55,7 +55,7 @@ if file is not None:
     column_data = st.selectbox('Select the column to evaluate fraud!', df.columns)
     if st.button("Run"):
         # Analyze data with Benford's Law
-        digit_counts, expected_counts, chi_squared, p_value = benfords_law(column_data)
+        benfords_law(column_data)
 
         # Display results
         st.write('First Digit Counts:')
