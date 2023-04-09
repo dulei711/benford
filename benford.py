@@ -3,8 +3,9 @@ import pandas as pd
 import numpy as np
 from scipy.stats import chi2_contingency
 from scipy.stats import kstest
+import matplotlib.pyplot as plt
 
-st.title("fraud suspicion tests")
+
 
 uploaded_file = st.file_uploader("Choose a file")
 if uploaded_file is not None:
@@ -31,8 +32,45 @@ if uploaded_file is not None:
         else:
             st.write("The column", column, "does not seem to contain fraudulent data (p-value =", p_value, ")")
 
-    column = st.selectbox("Select a column to analyze", df.columns)
-    st.write("### Chi-Squared Test")
-    chi_square_test(df, column)
-    st.write("### Benford's Law Test")
+        fig, axs = plt.subplots(1, 3, figsize=(15, 5))
+
+        # First position
+        observed_values_1 = df[column].astype(str).str[0].value_counts().sort_index()
+        expected_values_1 = pd.Series([np.log10(1 + 1 / i) for i in range(1, 10)], index=[str(i) for i in range(1, 10)]) * len(df[column])
+        axs[0].bar(observed_values_1.index, observed_values_1.values / len(df[column]), label='Observed')
+        axs[0].plot(expected_values_1.index, expected_values_1.values / len(df[column]), 'ro-', label='Expected')
+        axs[0].set_xlabel('First digit')
+        axs[0].set_ylabel('Frequency')
+        axs[0].legend()
+        axs[0].set_title('First position')
+
+        # Second position
+        observed_values_2 = df[column].astype(str).str[1].value_counts().sort_index()
+        expected_values_2 = pd.Series([np.log10(1 + 1 / i) for i in range(1, 10)], index=[str(i) for i in range(1, 10)]) * len(df[column])
+        axs[1].bar(observed_values_2.index, observed_values_2.values / len(df[column]), label='Observed')
+        axs[1].plot(expected_values_2.index, expected_values_2.values / len(df[column]), 'ro-', label='Expected')
+        axs[1].set_xlabel('Second digit')
+        axs[1].set_ylabel('Frequency')
+        axs[1].legend()
+        axs[1].set_title('Second position')
+
+         # Third position
+        observed_values_3 = df[column].astype(str).str[2].value_counts().sort_index()
+        expected_values_3 = pd.Series([np.log10(1 + 1 / i) for i in range(1, 10)], index=[str(i) for i in range(1, 10)]) * len(df[column])
+        axs[2].bar(observed_values_3.index, observed_values_3.values / len(df[column]), label='Observed')
+        axs[2].plot(expected_values_3.index, expected_values_3.values / len(df[column]), 'ro-', label='Expected')
+        axs[2].set_xlabel('Third digit')
+        axs[2].set_ylabel('Frequency')
+        axs[2].legend()
+        axs[2].set_title('Third position')
+
+        plt.tight_layout()
+        st.pyplot(fig)
+
+st.write("## Benford's Law and Chi-Square Test")
+
+if len(df.columns) > 0:
+    column = st.selectbox("Select a column:", df.columns)
     benfords_law_test(df, column)
+    chi_square_test(df, column)
+
