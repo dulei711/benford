@@ -1,79 +1,36 @@
-import pandas as pd
 import streamlit as st
-import seaborn as sns
-import matplotlib.pyplot as plt
-from collections import Counter
-import math
+import pandas as pd
+import numpy as np
+from scipy.stats import chi2_contingency
+from scipy.stats import kstest
 
-def get_digit_frequency(data, position):
-    # Check if data is a Series, and convert to str if necessary
-    if not isinstance(data, pd.Series):
-        data = pd.Series(data)
-    data = data.astype(str)
-
-    # Select the specified position of the digit
-    selected_digits = data.str[position - 1]
-
-    # Filter out non-numeric values and convert to int
-    selected_digits = selected_digits[selected_digits.str.isnumeric()]
-    selected_digits = selected_digits.astype(int)
-
-    # Count the frequency of each digit
-    freq_dict = dict(Counter(selected_digits))
-
-    # Compute the expected frequency of each digit at the specified position
-    expected_freq_dict = {d: math.log10(1 + 1/d) for d in range(1, 10)}
-    expected_freq_dict[0] = math.log10(1.1)
-
-    # Convert the frequency dictionaries to lists
-    actual_freq = [freq_dict.get(d, 0) for d in range(0, 10)]
-    expected_freq = [expected_freq_dict.get(d, 0) for d in range(0, 10)]
-
-    return actual_freq, expected_freq
-
-def plot_frequency_comparison(column, position):
-    actual_freq, expected_freq = get_digit_frequency(df[column], position)
-
-    fig, ax = plt.subplots(figsize=(8, 6))
-    sns.barplot(x=list(range(0, 10)), y=actual_freq, ax=ax)
-    sns.lineplot(x=list(range(0, 10)), y=expected_freq, ax=ax)
-    max_freq = max(max(actual_freq), max(expected_freq))
-    ax.set(title=f'Newcomb-Benford Law for Column "{column}" at Digit Position {position}', ylim=(0, max_freq))
-
-    # Show the plot
-    st.pyplot(fig)
-
-def plot_residuals(column, position):
-    actual_freq, expected_freq = get_digit_frequency(df[column], position)
-    log_actual = [math.log10(x) if x != 0 else 0 for x in actual_freq]
-    log_expected = [math.log10(x) if x != 0 else 0 for x in expected_freq]
-    residuals = [log_actual[i] - log_expected[i] for i in range(10)]
-
-    fig, ax = plt.subplots(figsize=(8, 6))
-    sns.barplot(x=list(range(0, 10)), y=residuals, ax=ax)
-    ax.axhline(y=0, color='r', linestyle='-')
-    ax.set(title=f'Newcomb-Benford Law Residuals for Column "{column}" at Digit Position {position}')
-
-    # Show the plot
-    st.pyplot(fig)
-
-st.set_page_config(page_title="Newcomb-Benford Law Anomaly Detection")
-st.title("Newcomb-Benford Law Anomaly Detection")
-
-uploaded_file = st.file_uploader("Choose a file to upload")
+uploaded_file = st.file_uploader("Choose a file")
 if uploaded_file is not None:
     df = pd.read_excel(uploaded_file)
 
-    # Get the column names and ask user which column to analyze
-    column_names = list(df.columns)
-    column = st.selectbox("Select a column to analyze", column_names)
+    def chi_square_test(df, column):
+        categories = pd.unique(df[column])
+        obs_freq = []
+        for cat in categories:
+            obs_freq.append(sum(df[column] == cat))
+        exp_freq = [len(df[column]) / len(categories)] * len(categories)
+        chi2, p, dof, ex = chi2_contingency([obs_freq, exp_freq])
+        if p < 0.05:
+            st.write("The column", column, "may contain fraudulent data (p-value =", p, ")")
+        else:
+            st.write("The column", column, "does not seem to contain fraudulent data (p-value =", p, ")")
 
-    # Ask user which digit position to analyze
-    position = st.slider("Select a digit position to analyze (1 = first digit)", 1, len(str(df[column].max())))
+    def benfords_law_test(df, column):
+        observed_values = df[column].astype(str).str[0].value_counts().sort_index()
+        expected_values = pd.Series([np.log10(1 + 1 / i) for i in range(1, 10)], index=[str(i) for i in range(1, 10)]) * len(df[column])
+        test_statistic, p_value = kstest(observed_values, expected_values)
+        if p_value < 0.05:
+            st.write("The column", column, "may contain fraudulent data (p-value =", p_value, ")")
+        else:
+            st.write("The column", column, "does not seem to contain fraudulent data (p-value =", p_value, ")")
 
-    if st.button("RUN"):
-        # Generate the frequency comparison plot
-        plot_frequency_comparison(column, position)
-
-        # Generate the residual plot
-        plot_residuals(column, position)
+    column = st.selectbox("Select a column to analyze", df.columns)
+    st.write("### Chi-Squared Test")
+    chi_square_test(df, column)
+    st.write("### Benford's Law Test")
+    benfords_law_test(df, column)
