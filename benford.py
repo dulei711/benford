@@ -20,7 +20,7 @@ def chi_square_test(df, column):
 def benfords_law_test(df, column):
     observed_values = df[column].astype(str).str[0].value_counts().sort_index()
     expected_values = pd.Series([np.log10(1 + 1 / i) for i in range(1, 10)], index=[str(i) for i in range(1, 10)]) * len(df[column])
-    test_statistic, p_value = kstest(observed_values, expected_values
+    test_statistic, p_value = kstest(observed_values, expected_values)
     if p_value < 0.05:
         st.write("The column", column, "may contain fraudulent data (p-value =", p_value, ")")
     else:
