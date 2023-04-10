@@ -2,11 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from scipy.stats import chisquare
-from bokeh.io import output_notebook, show
-from bokeh.layouts import gridplot
-from bokeh.models import ColumnDataSource
-from bokeh.plotting import figure
-
+import matplotlib as plt
 
 def benfords_law_test(df, column):    
     # calculate the expected frequencies for the first digit using Benford's Law
@@ -21,31 +17,28 @@ def benfords_law_test(df, column):
     first_digit_freq_obs = first_digit_counts / first_digit_counts.sum()
     two_digit_freq_obs = two_digit_counts / two_digit_counts.sum()
     three_digit_freq_obs = three_digit_counts / three_digit_counts.sum()
+    # create lists of digit ranges and expected/observed frequencies for each chart
+    digit_ranges = [range(1, 10), range(10, 100), range(100, 1000)]
+    expected_freqs = [first_digit_freq, two_digit_freq, three_digit_freq]
+    observed_freqs = [first_digit_freq_obs, two_digit_freq_obs, three_digit_freq_obs]
     
-    # create the first digit plot
-    source1 = ColumnDataSource(dict(x=range(1, 10), y=first_digit_freq, y_obs=first_digit_freq_obs))
-    p1 = figure(title="Benford's Law Analysis: First Digit", x_axis_label="First Digit", y_axis_label="Frequency", tooltips=[("Expected Frequency", "@y"), ("Observed Frequency", "@y_obs")])
-    p1.vbar(x='x', top='y', width=0.5, color='blue', alpha=0.5, legend_label='Expected Frequency', source=source1)
-    p1.vbar(x='x', top='y_obs', width=0.5, color='red', alpha=0.5, legend_label='Observed Frequency', source=source1)
-    p1.legend.location = "top_right"
+    return digit_ranges, expected_freqs, observed_freqs
 
-    # create the two digits plot
-    source2 = ColumnDataSource(dict(x=range(10, 100), y=two_digit_freq, y_obs=two_digit_freq_obs))
-    p2 = figure(title="Benford's Law Analysis: Two Digits", x_axis_label="Two Digits", y_axis_label="Frequency", tooltips=[("Expected Frequency", "@y"), ("Observed Frequency", "@y_obs")])
-    p2.vbar(x='x', top='y', width=0.5, color='blue', alpha=0.5, legend_label='Expected Frequency', source=source2)
-    p2.vbar(x='x', top='y_obs', width=0.5, color='red', alpha=0.5, legend_label='Observed Frequency', source=source2)
-    p2.legend.location = "top_right"
-
-    # create the three digits plot
-    source3 = ColumnDataSource(dict(x=range(100, 1000), y=three_digit_freq, y_obs=three_digit_freq_obs))
-    p3 = figure(title="Benford's Law Analysis: Three Digits", x_axis_label="Three Digits", y_axis_label="Frequency", tooltips=[("Expected Frequency", "@y"), ("Observed Frequency", "@y_obs")])
-    p3.vbar(x='x', top='y', width=0.5, color='blue', alpha=0.5, legend_label='Expected Frequency', source=source3)
-    p3.vbar(x='x', top='y_obs', width=0.5, color='red', alpha=0.5, legend_label='Observed Frequency', source=source3)
-    p3.legend.location = "top_right"
+def plot_benfords_law(digit_ranges, expected_freqs, observed_freqs):
+    fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(25,10))
     
-    # update layout and display plot
-    st.bokeh_chart(pio.to_bokeh(fig))
+    for i, ax in enumerate(axes):
+        ax.bar(digit_ranges[i], expected_freqs[i], alpha=0.5, color='b', label='Expected Frequency')
+        ax.bar(digit_ranges[i], observed_freqs[i], alpha=0.5, color='r', label='Observed Frequency')
+        ax.set_xlabel('Digits')
+        ax.set_ylabel('Frequency')
+        ax.set_title(f'Benford\'s Law Analysis: {i+1} Digits')
+        ax.legend(loc='best')
 
+    plt.tight_layout()
+    st.pyplot(fig)
+
+    
 st.title("## Benford's Law Test")
 
 uploaded_file = st.file_uploader("Choose a file")
@@ -54,3 +47,4 @@ if uploaded_file is not None:
     column = st.selectbox("Select a column:", df.columns)
     if st.button("Run"):
         benfords_law_test(df, column)
+        plot_benfords_law(digit_ranges, expected_freqs, observed_freqs)
