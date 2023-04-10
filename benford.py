@@ -17,7 +17,7 @@ def benfords_law_test(df, column):
     two_digit_freq_obs = two_digit_counts / two_digit_counts.sum()
     three_digit_freq_obs = three_digit_counts / three_digit_counts.sum()
     # create the figure and subplots
-    fig, axs = plt.subplots(1, 3, figsize=(20, 10))
+    fig, axs = plt.subplots(3, 1, figsize=(20, 10))
     # plot the first digit data
     axs[0].bar(range(1, 10), first_digit_freq, alpha=0.5, label='Expected Frequency')
     axs[0].bar(first_digit_counts.index.astype(int), first_digit_freq_obs, alpha=0.5, label='Observed Frequency')
