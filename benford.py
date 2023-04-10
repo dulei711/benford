@@ -17,7 +17,7 @@ def benfords_law_test(df, column):
     count_df = pd.DataFrame({'Number': number_counts.index, 'Count': number_counts.values})
     count_df['Observed Frequency'] = count_df['Count'] / count_df['Count'].sum()
     count_df['Expected Frequency'] = np.log10(1 + 1/count_df['Number']) / np.log10(10)
-    st.dataframe(count_df)
+    return st.dataframe(count_df)
     
 st.title("## Benford's Law Test")
 
