@@ -28,7 +28,7 @@ def benfords_law_test(df, column):
     else:
         st.write("The column", column, "does not seem to contain fraudulent data (p-value =", p_value, ")")
 
-    fig, axs = plt.subplots(3, 1, figsize=(15, 5))
+    fig, axs = plt.subplots(3, 1, figsize=(20, 10))
     
     # First position
     observed_values_1 = df[column].astype(str).str[0].value_counts().sort_index()
