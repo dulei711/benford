@@ -28,10 +28,6 @@ def benfords_law_test(df, column):
 
     fig, axs = plt.subplots(1, 3, figsize=(15, 5))
     
-    # First, extract the third digit of each number in the column
-    third_digits = [int(str(abs(x))[2]) for x in df[column] if abs(x) >= 100]
-    # Create a MultiIndex for the expected values
-    index = pd.MultiIndex.from_product([range(1, 10), range(10), range(10)], names=['First Digit', 'Second Digit', 'Third Digit'])
     # First position
     observed_values_1 = df[column].astype(str).str[0].value_counts().sort_index()
     expected_values_1 = pd.Series([np.log10(1 + 1 / i) for i in range(1, 10)], index=[str(i) for i in range(1, 10)]) * len(df[column])
@@ -45,10 +41,6 @@ def benfords_law_test(df, column):
     # Second position
     observed_values_2 = df[column].astype(str).str[1].value_counts().sort_index()
     #expected_values_2 = pd.Series([np.log10(1 + 1 / i) for i in range(1, 10)], index=[str(i) for i in range(1, 10)]) * len(df[column])
-    # First, extract the second digit of each number in the column
-    second_digits = [int(str(abs(x))[1]) for x in df[column] if abs(x) >= 10]
-    # Create a MultiIndex for the expected values
-    index = pd.MultiIndex.from_product([range(1, 10), range(10)], names=['First Digit', 'Second Digit'])
     expected_values_2 = pd.Series([np.log10(1 + 1 / (10*i + j)) for i in range(1, 10) for j in range(10)], index=index) * len(second_digits)
     axs[1].bar(observed_values_2.index, observed_values_2.values / len(df[column]), label='Observed')
     axs[1].plot(expected_values_2.index, expected_values_2.values / len(df[column]), 'ro-', label='Expected')
@@ -60,11 +52,6 @@ def benfords_law_test(df, column):
     # Third position
     observed_values_3 = df[column].astype(str).str[2].value_counts().sort_index()
     #expected_values_3 = pd.Series([np.log10(1 + 1 / i) for i in range(1, 10)], index=[str(i) for i in range(1, 10)]) * len(df[column])
-    # First, extract the third digit of each number in the column
-    third_digits = [int(str(abs(x))[2]) for x in df[column] if abs(x) >= 100]
-    # Create a MultiIndex for the expected values
-    index = pd.MultiIndex.from_product([range(1, 10), range(10), range(10)], names=['First Digit', 'Second Digit', 'Third Digit'])
-    # Calculate the expected values for the third digit
     expected_values_3 = pd.Series([(np.log10(1 + 1 / (100*i + 10*j + k)) - np.log10(1 + 1 / (100*i + 10*j))) for i in range(1, 10) for j in range(10) for k in range(10)], index=index) * len(third_digits)
     axs[2].bar(observed_values_3.index, observed_values_3.values / len(df[column]), label='Observed')
     axs[2].plot(expected_values_3.index, expected_values_3.values / len(df[column]), 'ro-', label='Expected')
