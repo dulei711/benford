@@ -44,7 +44,6 @@ def benfords_law_test(df, column):
     p3.legend.location = "top_right"
     
     # update layout and display plot
-    fig.update_layout(height=800, title_text="Benford's Law Analysis")
     st.bokeh_chart(pio.to_bokeh(fig))
 
 st.title("## Benford's Law Test")
