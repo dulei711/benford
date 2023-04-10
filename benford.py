@@ -43,7 +43,7 @@ def benfords_law_test(df, column):
 
     # plot for three digits
     expected_three = ax[2].bar(np.arange(100, 1000), three_digit_freq, alpha=0.5, label='Expected')
-    observed_three = ax[2].bar(three_digit_counts.index, three_digit_freq_obs.loc[three_digit_counts.index], alpha=0.5 label='Observed')
+    observed_three = ax[2].bar(three_digit_counts.index, three_digit_freq_obs.loc[three_digit_counts.index], alpha=0.5, label='Observed')
     ax[2].set_xlabel('Three Digits')
     ax[2].set_ylabel('Frequency')
     ax[2].set_title('Three Digits Frequencies')
