@@ -9,7 +9,7 @@ import seaborn as sns
 sns.set_style("darkgrid")
 
 def benfords_law_test(df, column):
-    df[column] = df[column].astype(float)
+    df[column] = df[column].apply(pd.to_numeric, errors='coerce')
     # calculate the expected frequencies for the first digit using Benford's Law
     first_digit_freq = np.log10(1 + 1 / np.arange(1, 10))
     two_digit_freq = np.array([np.log10(1 + 1 / (10 * i + j)) for i in range(1, 10) for j in range(0, 10)])
