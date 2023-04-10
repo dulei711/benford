@@ -53,8 +53,8 @@ def benfords_law_test(df, column):
     # Third position
     observed_values_3 = df[column].astype(str).str[2].value_counts().sort_index()
     #expected_values_3 = pd.Series([np.log10(1 + 1 / i) for i in range(1, 10)], index=[str(i) for i in range(1, 10)]) * len(df[column])
-    expected_values_2 = pd.Series([np.log10(1 + 1 / i) for i in range(10, 1000, 10)], index=[str(i) for i in range(10, 1000, 10)]) * len(df[column])
-    expected_values_2['1000'] = np.log10(1 + 1/1000) * len(df[column])
+    expected_values_3 = pd.Series([np.log10(1 + 1 / i) for i in range(10, 1000, 10)], index=[str(i) for i in range(10, 1000, 10)]) * len(df[column])
+    expected_values_3['1000'] = np.log10(1 + 1/1000) * len(df[column])
     axs[2].bar(observed_values_3.index, observed_values_3.values / len(df[column]), label='Observed')
     axs[2].plot(expected_values_3.index, expected_values_3.values / len(df[column]), 'ro-', label='Expected')
     axs[2].set_xlabel('Third digit')
