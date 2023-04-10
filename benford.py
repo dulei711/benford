@@ -29,7 +29,15 @@ def benfords_law_test(df, column):
 
     # Second position
     observed_values_2 = df[column].astype(str).str[:2].value_counts()
-    expected_values_2 = pd.Series([np.log10(1 + 1 / i) for i in range(1, 100)], index=[str(i) for i in range(0, 99)]) * len(df[column])
+    #expected_values_2 = pd.Series([np.log10(1 + 1 / i) for i in range(1, 100)], index=[str(i) for i in range(0, 99)]) * len(df[column])
+    N = 100
+    expected_freq = [np.log10(1 + 1/d) for d in range(1, 10)]
+    expected_values_2 = []
+    for i in range(10):
+        for j in range(10):
+            num = int(str(i) + str(j))
+            if num < N:
+                expected_values_2.append(expected_freq[i-1] * expected_freq[j-1] * N)    
     p_value(observed_values_2, expected_values_2, "second")
     axs[1].bar(observed_values_2.index, observed_values_2.values / len(df[column]), label='Observed')
     axs[1].plot(expected_values_2.index, expected_values_2.values / len(df[column]), 'ro-', label='Expected')
@@ -42,7 +50,17 @@ def benfords_law_test(df, column):
 
     # Third position
     observed_values_3 = df[column].astype(str).str[:3].value_counts()
-    expected_values_3 = pd.Series([np.log10(1 + 1 / i) for i in range(1, 1000)], index=[str(i) for i in range(0, 999)]) * len(df[column])
+    #expected_values_3 = pd.Series([np.log10(1 + 1 / i) for i in range(1, 1000)], index=[str(i) for i in range(0, 999)]) * len(df[column])
+    N = 1000
+    expected_freq = [np.log10(1 + 1/d) for d in range(1, 10)]
+    expected_values_3 = []
+    for i in range(10):
+        for j in range(10):
+            for k in range(10):
+                num = int(str(i) + str(j) + str(k))
+                if num < N:
+                    expected_values_3.append(expected_freq[i-1] * expected_freq[j-1] * expected_freq[k-1] * N)
+                    
     p_value(observed_values_3, expected_values_3, "third")
     axs[2].bar(observed_values_3.index, observed_values_3.values / len(df[column]), label='Observed')
     axs[2].plot(expected_values_3.index, expected_values_3.values / len(df[column]), 'ro-', label='Expected')
