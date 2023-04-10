@@ -43,8 +43,6 @@ def benfords_law_test(df, column):
     p3.vbar(x='x', top='y_obs', width=0.5, color='red', alpha=0.5, legend_label='Observed Frequency', source=source3)
     p3.legend.location = "top_right"
     
-    fig.update_yaxes(title_text="Frequency", row=3, col=1)
-
     # update layout and display plot
     fig.update_layout(height=800, title_text="Benford's Law Analysis")
     st.bokeh_chart(pio.to_bokeh(fig))
