@@ -28,8 +28,7 @@ def benfords_law_test(df, column):
 
     # Second position
     observed_values_2 = pd.Series(df[column].astype(str).str[:2].value_counts())
-    list2 = [int(x) for x in observed_values_2]
-    observed_values_2 = list2.sort()
+    observed_values_2.sort(key=int)
     expected_values_2 = pd.Series([np.log10(1 + 1 / i) for i in range(1, 100)], index=[str(i) for i in range(0, 99)]) * len(df[column])
     p_value(observed_values_2, expected_values_2, "second")
     axs[1].bar(observed_values_2.index, observed_values_2.values / len(df[column]), label='Observed')
@@ -41,8 +40,7 @@ def benfords_law_test(df, column):
 
     # Third position
     observed_values_3 = pd.Series(df[column].astype(str).str[:3].value_counts())
-    list3 = [int(x) for x in observed_values_3]
-    observed_values_3 = list3.sort()
+    observed_values_3.sort(key=int)
     expected_values_3 = pd.Series([np.log10(1 + 1 / i) for i in range(1, 1000)], index=[str(i) for i in range(0, 999)]) * len(df[column])
     p_value(observed_values_3, expected_values_3, "third")
     axs[2].bar(observed_values_3.index, observed_values_3.values / len(df[column]), label='Observed')
