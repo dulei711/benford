@@ -10,9 +10,8 @@ def benfords_law_test(df, column):
     count_df['Expected Frequency'] = np.log10(1 + 1/count_df['Number']) / np.log10(10)
 
     # Plot the observed and expected frequencies
-    plt.plot(count_df['Number'], count_df['Observed Frequency'], 'bo-', label='Observed Frequency')
+    plt.bar(count_df['Number'], count_df['Count'], label='Observed Frequency')
     plt.plot(count_df['Number'], count_df['Expected Frequency'], 'r^-', label='Expected Frequency')
-    plt.xscale('log')
     plt.xlabel('Number')
     plt.ylabel('Frequency')
     plt.title('Benford\'s Law Test')
