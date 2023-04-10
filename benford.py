@@ -5,6 +5,12 @@ from scipy.stats import chi2_contingency
 from scipy.stats import kstest
 import matplotlib.pyplot as plt
 
+def p_value(observed_values, expected_values):
+    test_statistic, p_value = kstest(observed_values, expected_values)
+    if p_value < 0.05:
+        st.write("The column", column, "may contain fraudulent data (p-value =", p_value, ")")
+    else:
+        st.write("The column", column, "does not seem to contain fraudulent data (p-value =", p_value, ")")
 
 def chi_square_test(df, column):
     categories = pd.unique(df[column])
@@ -13,17 +19,19 @@ def chi_square_test(df, column):
         obs_freq.append(sum(df[column] == cat))
     exp_freq = [len(df[column]) / len(categories)] * len(categories)
     chi2, p, dof, ex = chi2_contingency([obs_freq, exp_freq])
-    if p < 0.05:
-        st.write("The column", column, "may contain fraudulent data (p-value =", p, ")")
-    else:
-        st.write("The column", column, "does not seem to contain fraudulent data (p-value =", p, ")")
     
-def p_value(observed_values, expected_values)
-    test_statistic, p_value = kstest(observed_values, expected_values)
-    if p_value < 0.05:
-        st.write("The column", column, "may contain fraudulent data (p-value =", p_value, ")")
-    else:
-        st.write("The column", column, "does not seem to contain fraudulent data (p-value =", p_value, ")")
+    fig, ax = plt.subplots(1, 1, figsize=(20, 10))
+    
+    # First position
+    observed_values_1 = obs_freq
+    expected_values_1 = exp_freq
+    p_value(observed_values_1, expected_values_1)
+    axs[0].bar(observed_values_1.index, observed_values_1.values / len(df[column]), label='Observed')
+    axs[0].plot(expected_values_1.index, expected_values_1.values / len(df[column]), 'ro-', label='Expected')
+    axs[0].set_xlabel('First digit')
+    axs[0].set_ylabel('Frequency')
+    axs[0].legend()
+    axs[0].set_title('Chi-Squared test')
     
 def benfords_law_test(df, column):
     fig, axs = plt.subplots(3, 1, figsize=(20, 10))
