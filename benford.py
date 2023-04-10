@@ -18,6 +18,32 @@ def benfords_law_test(df, column):
     two_digit_freq_obs = two_digit_counts / two_digit_counts.sum()
     three_digit_freq_obs = three_digit_counts / three_digit_counts.sum()
     
+    # plot a bar chart for each digit
+    fig, axes = plt.subplots(nrows=3, ncols=3, figsize=(12, 8))
+    fig.suptitle('Benford\'s Law Distribution for {}'.format(column))
+    for i, ax in enumerate(axes.flat):
+        digit = i + 1
+        if digit == 2:
+            freq = two_digit_freq
+            freq_obs = two_digit_freq_obs
+            xlabels = [str(i) + str(j) for i in range(1, 10) for j in range(0, 10)]
+        elif digit == 3:
+            freq = three_digit_freq
+            freq_obs = three_digit_freq_obs
+            xlabels = [str(i) + str(j) + str(k) for i in range(1, 10) for j in range(0, 10) for k in range(0, 10)]
+        else:
+            freq = first_digit_freq
+            freq_obs = first_digit_freq_obs
+            xlabels = np.arange(1, 10)
+        
+        ax.bar(xlabels, freq, width=0.8, alpha=0.5, label='Expected')
+        ax.bar(xlabels, freq_obs, width=0.4, alpha=0.8, label='Observed')
+        ax.set_title('Digit {}'.format(digit))
+        ax.legend()
+    
+    plt.tight_layout()
+    st.pyplot(fig)
+    
 st.title("## Benford's Law Test")
 
 uploaded_file = st.file_uploader("Choose a file")
