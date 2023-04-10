@@ -26,12 +26,12 @@ def chi_square_test(df, column):
     observed_values_1 = obs_freq
     expected_values_1 = exp_freq
     p_value(observed_values_1, expected_values_1)
-    axs[0].bar(observed_values_1.index, observed_values_1.values / len(df[column]), label='Observed')
-    axs[0].plot(expected_values_1.index, expected_values_1.values / len(df[column]), 'ro-', label='Expected')
-    axs[0].set_xlabel('First digit')
-    axs[0].set_ylabel('Frequency')
-    axs[0].legend()
-    axs[0].set_title('Chi-Squared test')
+    ax[0].bar(observed_values_1.index, observed_values_1.values / len(df[column]), label='Observed')
+    ax[0].plot(expected_values_1.index, expected_values_1.values / len(df[column]), 'ro-', label='Expected')
+    ax[0].set_xlabel('First digit')
+    ax[0].set_ylabel('Frequency')
+    ax[0].legend()
+    ax[0].set_title('Chi-Squared test')
     
     plt.tight_layout()
     st.pyplot(fig)
