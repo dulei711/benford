@@ -63,7 +63,7 @@ def benfords_law_test(df, column):
     # Add a column for the p-values
     df_comparison['p-value'] = [p_value_1] * 9 + [p_value_2] * 90 + [p_value_3] * 900
     
-    return df_comparison
+    return st.dataframe(df_comparison)
 
     
 st.title("## Benford's Law Test")
