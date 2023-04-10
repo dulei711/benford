@@ -23,6 +23,7 @@ def benfords_law_test(df, column):
     axs[0].plot(expected_values_1.index, expected_values_1.values / len(df[column]), 'ro-', label='Expected')
     axs[0].set_xlabel('First digit')
     axs[0].set_ylabel('Frequency')
+    axs[0].set_xticks(np.arange(0, 9, step=1))
     axs[0].legend()
     axs[0].set_title('First position')
 
@@ -34,7 +35,7 @@ def benfords_law_test(df, column):
     axs[1].plot(expected_values_2.index, expected_values_2.values / len(df[column]), 'ro-', label='Expected')
     axs[1].set_xlabel('Second digit')
     axs[1].set_ylabel('Frequency')
-    axs[0].set_xticks(np.arange(0, 99, step=1))
+    axs[1].set_xticks(np.arange(0, 99, step=1))
     axs[1].legend()
     axs[1].set_title('Second position')
 
@@ -47,7 +48,7 @@ def benfords_law_test(df, column):
     axs[2].plot(expected_values_3.index, expected_values_3.values / len(df[column]), 'ro-', label='Expected')
     axs[2].set_xlabel('Third digit')
     axs[2].set_ylabel('Frequency')
-    axs[0].set_xticks(np.arange(0, 999, step=1))
+    axs[2].set_xticks(np.arange(0, 999, step=1))
     axs[2].legend()
     axs[2].set_title('Third position')
     
