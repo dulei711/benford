@@ -4,12 +4,67 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def benfords_law_test(df, column):    
-    number_counts = df[column].value_counts()
-    count_df = pd.DataFrame({'Number': number_counts.index, 'Count': number_counts.values})
-    count_df['Observed Frequency'] = count_df['Count'] / count_df['Count'].sum()
-    count_df['Expected Frequency'] = np.log10(1 + 1/count_df['Number']) / np.log10(10)
-    st.table(count_df)
+    # calculate the expected frequencies for the first digit using Benford's Law
+    first_digit_freq = np.log10(1 + 1 / np.arange(1, 10))
+    # calculate the expected frequencies for the first two digits using Benford's Law
+    two_digit_freq = np.array([np.log10(1 + 1 / (10 * i + j)) for i in range(1, 10) for j in range(0, 10)])
+    # calculate the expected frequencies for the first three digits using Benford's Law
+    three_digit_freq = np.array([np.log10(1 + 1 / (100 * i + 10 * j + k)) for i in range(1, 10) for j in range(0, 10) for k in range(0, 10)])
+    # count the occurrences of each first, two, and three digit combination in the numbers column
+    first_digit_counts = df['Numbers'].astype(str).str[0].value_counts()
+    two_digit_counts = df['Numbers'].astype(str).str[:2].value_counts()
+    three_digit_counts = df['Numbers'].astype(str).str[:3].value_counts()
+
+    # normalize the counts to get the observed frequencies
+    first_digit_freq_obs = first_digit_counts / first_digit_counts.sum()
+    two_digit_freq_obs = two_digit_counts / two_digit_counts.sum()
+    three_digit_freq_obs = three_digit_counts / three_digit_counts.sum()
+
+    # print the expected and observed frequencies for the first, two, and three digits
+    st.text('First Digit:')
+    st.dataframe(pd.DataFrame({'Expected Frequency': first_digit_freq, 'Observed Frequency': first_digit_freq_obs})
+
+    st.text('Two Digits:')
+    st.dataframe(pd.DataFrame({'Expected Frequency': two_digit_freq, 'Observed Frequency': two_digit_freq_obs}))
+
+    st.text('Three Digits:')
+    st.dataframe(pd.DataFrame({'Expected Frequency': three_digit_freq, 'Observed Frequency': three_digit_freq_obs}))
     
+    # create the figure and subplots
+    fig, axs = plt.subplots(1, 3, figsize=(15, 5))
+
+    # plot the first digit data
+    axs[0].bar(range(1, 10), first_digit_freq, alpha=0.5, label='Expected Frequency')
+    axs[0].bar(first_digit_counts.index.astype(int), first_digit_freq_obs, alpha=0.5, label='Observed Frequency')
+    axs[0].set_xlabel('First Digit')
+    axs[0].set_ylabel('Frequency')
+    axs[0].legend()
+    axs[0].set_title('Benford\'s Law Analysis: First Digit')
+
+    # plot the two digit data
+    axs[1].bar(range(10, 100), two_digit_freq, alpha=0.5, label='Expected Frequency')
+    axs[1].bar(two_digit_counts.index.astype(int), two_digit_freq_obs, alpha=0.5, label='Observed Frequency')
+    axs[1].set_xlabel('Two Digits')
+    axs[1].set_ylabel('Frequency')
+    axs[1].legend()
+    axs[1].set_title('Benford\'s Law Analysis: Two Digits')
+
+    # plot the three digit data
+    axs[2].bar(range(100, 1000), three_digit_freq, alpha=0.5, label='Expected Frequency')
+    axs[2].bar(three_digit_counts.index.astype(int), three_digit_freq_obs, alpha=0.5, label='Observed Frequency')
+    axs[2].set_xlabel('Three Digits')
+    axs[2].set_ylabel('Frequency')
+    axs[2].legend()
+    axs[2].set_title('Benford\'s Law Analysis: Three Digits')
+
+    # set the overall title and layout
+    plt.suptitle('Benford\'s Law Analysis')
+    plt.tight_layout()
+
+    # display the plot
+    st.pyplot(fig)
+
+
 st.title("## Benford's Law Test")
 
 uploaded_file = st.file_uploader("Choose a file")
