@@ -9,7 +9,6 @@ import seaborn as sns
 sns.set_style("darkgrid")
 
 def benfords_law_test(df, column):
-    df[column] = df[column].apply(pd.to_numeric, errors='coerce')
     # calculate the expected frequencies for the first digit using Benford's Law
     first_digit_freq = np.log10(1 + 1 / np.arange(1, 10))
     two_digit_freq = np.array([np.log10(1 + 1 / (10 * i + j)) for i in range(1, 10) for j in range(0, 10)])
@@ -28,7 +27,7 @@ def benfords_law_test(df, column):
 
     # plot for first digits
     expected_first = ax[0].bar(np.arange(1, 10), first_digit_freq, alpha=0.5, label='Expected')
-    observed_first = ax[0].bar(first_digit_counts.index.astype(int), first_digit_freq_obs.loc[first_digit_counts.index.astype(str)], alpha=0.5, label='Observed')
+    observed_first = ax[0].bar(first_digit_counts.index.astype(np,int), first_digit_freq_obs.loc[first_digit_counts.index.astype(str)], alpha=0.5, label='Observed')
     ax[0].set_xlabel('First Digit')
     ax[0].set_ylabel('Frequency')
     ax[0].set_title('First Digit Frequencies')
@@ -36,7 +35,7 @@ def benfords_law_test(df, column):
 
     # plot for two digits
     expected_two = ax[1].bar(np.arange(10, 100), two_digit_freq, alpha=0.5, label='Expected')
-    observed_two = ax[1].bar(two_digit_counts.index.astype(int), two_digit_freq_obs.loc[two_digit_counts.index.astype(str)], alpha=0.5, label='Observed')
+    observed_two = ax[1].bar(two_digit_counts.index.astype(np,int), two_digit_freq_obs.loc[two_digit_counts.index.astype(str)], alpha=0.5, label='Observed')
     ax[1].set_xlabel('Two Digits')
     ax[1].set_ylabel('Frequency')
     ax[1].set_title('Two Digits Frequencies')
@@ -44,7 +43,7 @@ def benfords_law_test(df, column):
 
     # plot for three digits
     expected_three = ax[2].bar(np.arange(100, 1000), three_digit_freq, alpha=0.5, label='Expected')
-    observed_three = ax[2].bar(three_digit_counts.index.astype(int), three_digit_freq_obs.loc[three_digit_counts.index.astype(str)], alpha=0.5, label='Observed')
+    observed_three = ax[2].bar(three_digit_counts.index.astype(np,int), three_digit_freq_obs.loc[three_digit_counts.index.astype(str)], alpha=0.5, label='Observed')
     ax[2].set_xlabel('Three Digits')
     ax[2].set_ylabel('Frequency')
     ax[2].set_title('Three Digits Frequencies')
