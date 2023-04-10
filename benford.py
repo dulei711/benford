@@ -4,6 +4,8 @@ import numpy as np
 from scipy.stats import chisquare
 import plotly.graph_objects as go
 import plotly.io as pio
+from plotly.subplots import make_subplots
+
 
 def benfords_law_test(df, column):    
     # calculate the expected frequencies for the first digit using Benford's Law
