@@ -52,7 +52,7 @@ def benfords_law_test(df, column):
     st.pyplot(fig)
        
 
-st.title("## Benford's Law and Chi-Square Test")
+st.title("## Benford's Law Test")
 
 uploaded_file = st.file_uploader("Choose a file")
 if uploaded_file is not None:
