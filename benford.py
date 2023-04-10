@@ -28,7 +28,7 @@ def benfords_law_test(df, column):
 
     # Second position
     #observed_values_2 = df[column].astype(str).str[:2].value_counts().sort_index().sort_index()
-    observed_values_3 = df[column].astype(str).str[:2].value_counts().sort_index(key=lambda x: x.astype(int))
+    observed_values_2 = df[column].astype(str).str[:2].value_counts().sort_index(key=lambda x: x.astype(int))
     expected_values_2 = pd.Series([np.log10(1 + 1 / i) for i in range(1, 100)], index=[str(i) for i in range(0, 99)]) * len(df[column])
     p_value(observed_values_2, expected_values_2, "second")
     axs[1].bar(observed_values_2.index, observed_values_2.values / len(df[column]), label='Observed')
