@@ -2,9 +2,10 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from scipy.stats import chisquare
-import plotly.graph_objects as go
-import plotly.io as pio
-from plotly.subplots import make_subplots
+from bokeh.io import output_notebook, show
+from bokeh.layouts import gridplot
+from bokeh.models import ColumnDataSource
+from bokeh.plotting import figure
 
 
 def benfords_law_test(df, column):    
@@ -21,24 +22,33 @@ def benfords_law_test(df, column):
     two_digit_freq_obs = two_digit_counts / two_digit_counts.sum()
     three_digit_freq_obs = three_digit_counts / three_digit_counts.sum()
     
-    # create subplots
-    fig = make_subplots(rows=3, cols=1, subplot_titles=("Benford's Law Analysis: First Digit", "Benford's Law Analysis: Two Digits", "Benford's Law Analysis: Three Digits"), shared_xaxes=True)
-    # add bar traces for first digit
-    fig.add_trace(go.Bar(x=range(1, 10), y=first_digit_freq, name='Expected Frequency', marker=dict(opacity=0.5)), row=1, col=1)
-    fig.add_trace(go.Bar(x=first_digit_counts.index.astype(int), y=first_digit_freq_obs, name='Observed Frequency', marker=dict(opacity=0.5)), row=1, col=1)
-    fig.update_xaxes(title_text="First Digit", row=1, col=1)
-    fig.update_yaxes(title_text="Frequency", row=1, col=1)    
-    # add bar traces for two digits
-    fig.add_trace(go.Bar(x=range(10, 100), y=two_digit_freq, name='Expected Frequency', marker=dict(opacity=0.5)), row=2, col=1)
-    fig.add_trace(go.Bar(x=two_digit_counts.index.astype(int), y=two_digit_freq_obs, name='Observed Frequency', marker=dict(opacity=0.5)), row=2, col=1)
-    fig.update_xaxes(title_text="Two Digits", row=2, col=1)
-    fig.update_yaxes(title_text="Frequency", row=2, col=1)    
-    # add bar traces for three digits
-    fig.add_trace(go.Bar(x=range(100, 1000), y=three_digit_freq, name='Expected Frequency', marker=dict(opacity=0.5)), row=3, col=1)
-    fig.add_trace(go.Bar(x=three_digit_counts.index.astype(int), y=three_digit_freq_obs, name='Observed Frequency', marker=dict(opacity=0.5)), row=3, col=1)
+    # create the first digit plot
+    source1 = ColumnDataSource(dict(x=range(1, 10), y=first_digit_freq, y_obs=first_digit_freq_obs))
+    p1 = figure(title="Benford's Law Analysis: First Digit", x_axis_label="First Digit", y_axis_label="Frequency", tooltips=[("Expected Frequency", "@y"), ("Observed Frequency", "@y_obs")])
+    p1.vbar(x='x', top='y', width=0.5, color='blue', alpha=0.5, legend_label='Expected Frequency', source=source1)
+    p1.vbar(x='x', top='y_obs', width=0.5, color='red', alpha=0.5, legend_label='Observed Frequency', source=source1)
+    p1.legend.location = "top_right"
+
+    # create the two digits plot
+    source2 = ColumnDataSource(dict(x=range(10, 100), y=two_digit_freq, y_obs=two_digit_freq_obs))
+    p2 = figure(title="Benford's Law Analysis: Two Digits", x_axis_label="Two Digits", y_axis_label="Frequency", tooltips=[("Expected Frequency", "@y"), ("Observed Frequency", "@y_obs")])
+    p2.vbar(x='x', top='y', width=0.5, color='blue', alpha=0.5, legend_label='Expected Frequency', source=source2)
+    p2.vbar(x='x', top='y_obs', width=0.5, color='red', alpha=0.5, legend_label='Observed Frequency', source=source2)
+    p2.legend.location = "top_right"
+
+    # create the three digits plot
+    source3 = ColumnDataSource(dict(x=range(100, 1000), y=three_digit_freq, y_obs=three_digit_freq_obs))
+    p3 = figure(title="Benford's Law Analysis: Three Digits", x_axis_label="Three Digits", y_axis_label="Frequency", tooltips=[("Expected Frequency", "@y"), ("Observed Frequency", "@y_obs")])
+    p3.vbar(x='x', top='y', width=0.5, color='blue', alpha=0.5, legend_label='Expected Frequency', source=source3)
+    p3.vbar(x='x', top='y_obs', width=0.5, color='red', alpha=0.5, legend_label='Observed Frequency', source=source3)
+    p3.legend.location = "top_right"
+    
     fig.update_xaxes(title_text="Three Digits", row=3, col=1)
     fig.update_yaxes(title_text="Frequency", row=3, col=1)
-    st.plotly_chart(fig, use_container_width=True)
+
+    # update layout and display plot
+    fig.update_layout(height=800, title_text="Benford's Law Analysis")
+    st.bokeh_chart(pio.to_bokeh(fig))
 
 st.title("## Benford's Law Test")
 
