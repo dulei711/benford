@@ -18,34 +18,33 @@ def benfords_law_test(df, column):
     two_digit_freq_obs = two_digit_counts / two_digit_counts.sum()
     three_digit_freq_obs = three_digit_counts / three_digit_counts.sum()
     
-    # plot the expected vs observed frequencies for the first digit
-    fig, ax = plt.subplots()
-    ax.plot(np.arange(1, 10), first_digit_freq, 'ro-', label='Expected')
-    ax.bar(np.arange(1, 10), first_digit_freq_obs, alpha=0.5, label='Observed')
-    ax.set_xlabel('First Digit')
-    ax.set_ylabel('Frequency')
-    ax.set_title('Benford\'s Law Test for First Digit in ' + column)
-    ax.legend()
-    st.pyplot(fig)
-
-    # plot the expected vs observed frequencies for the two digits
-    fig, ax = plt.subplots()
-    ax.plot(np.arange(10, 100), two_digit_freq, 'ro-', label='Expected')
-    ax.bar(np.arange(10, 100), two_digit_freq_obs, alpha=0.5, label='Observed')
-    ax.set_xlabel('Two Digits')
-    ax.set_ylabel('Frequency')
-    ax.set_title('Benford\'s Law Test for Two Digits in ' + column)
-    ax.legend()
-    st.pyplot(fig)
-
-    # plot the expected vs observed frequencies for the three digits
-    fig, ax = plt.subplots()
-    ax.plot(np.arange(100, 1000), three_digit_freq, 'ro-', label='Expected')
-    ax.bar(np.arange(100, 1000), three_digit_freq_obs, alpha=0.5, label='Observed')
-    ax.set_xlabel('Three Digits')
-    ax.set_ylabel('Frequency')
-    ax.set_title('Benford\'s Law Test for Three Digits in ' + column)
-    ax.legend()
+    fig, axs = plt.subplots(3, 1, figsize=(8, 12))
+    
+    # plot the comparison between expected and observed frequencies for first digit
+    axs[0].bar(np.arange(1, 10), first_digit_freq, label='Expected', alpha=0.5)
+    axs[0].bar(np.arange(1, 10), first_digit_freq_obs, label='Observed', alpha=0.5)
+    axs[0].set_title('First Digit')
+    axs[0].set_xlabel('Digit')
+    axs[0].set_ylabel('Frequency')
+    axs[0].legend()
+    
+    # plot the comparison between expected and observed frequencies for two digits
+    axs[1].bar(np.arange(10, 100), two_digit_freq, label='Expected', alpha=0.5)
+    axs[1].bar(np.arange(10, 100), two_digit_freq_obs, label='Observed', alpha=0.5)
+    axs[1].set_title('Two Digits')
+    axs[1].set_xlabel('Digit')
+    axs[1].set_ylabel('Frequency')
+    axs[1].legend()
+    
+    # plot the comparison between expected and observed frequencies for three digits
+    axs[2].bar(np.arange(100, 1000), three_digit_freq, label='Expected', alpha=0.5)
+    axs[2].bar(np.arange(100, 1000), three_digit_freq_obs, label='Observed', alpha=0.5)
+    axs[2].set_title('Three Digits')
+    axs[2].set_xlabel('Digit')
+    axs[2].set_ylabel('Frequency')
+    axs[2].legend()
+    
+    plt.tight_layout()
     st.pyplot(fig)
     
 st.title("## Benford's Law Test")
