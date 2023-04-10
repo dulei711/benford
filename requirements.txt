@@ -6,4 +6,4 @@ scipy
 seaborn
 python-math
 openpyxl
-bokeh
+seaborn
