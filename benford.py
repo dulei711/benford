@@ -43,7 +43,6 @@ def benfords_law_test(df, column):
     p3.vbar(x='x', top='y_obs', width=0.5, color='red', alpha=0.5, legend_label='Observed Frequency', source=source3)
     p3.legend.location = "top_right"
     
-    fig.update_xaxes(title_text="Three Digits", row=3, col=1)
     fig.update_yaxes(title_text="Frequency", row=3, col=1)
 
     # update layout and display plot
