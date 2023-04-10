@@ -7,3 +7,6 @@ seaborn
 python-math
 openpyxl
 plotly
+plotly-express
+psutil
+kaleido
