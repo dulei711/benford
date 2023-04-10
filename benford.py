@@ -36,6 +36,7 @@ def benfords_law_test(df, column):
     axs[1].set_xlabel('Second digit')
     axs[1].set_ylabel('Frequency')
     axs[1].set_xticks(np.arange(0, 99, step=1))
+    axs[1].set_xlim([0, 99])  # set x-axis limit from 0 to 999
     axs[1].legend()
     axs[1].set_title('Second position')
 
@@ -49,6 +50,7 @@ def benfords_law_test(df, column):
     axs[2].set_xlabel('Third digit')
     axs[2].set_ylabel('Frequency')
     axs[2].set_xticks(np.arange(0, 999, step=1))
+    axs[2].set_xlim([0, 999])  # set x-axis limit from 0 to 999
     axs[2].legend()
     axs[2].set_title('Third position')
     
