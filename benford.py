@@ -16,9 +16,7 @@ def benfords_law_test(df, column):
     fig, axs = plt.subplots(3, 1, figsize=(20, 10))
     
     # First position
-    observed_values_1 = pd.Series(df[column].astype(str).str[0].value_counts())
-    observed_values_1 = [int(x) for x in observed_values_1]
-    observed_values_1.sort()
+    observed_values_1 = pd.Series(df[column].astype(str).str[0].value_counts()).sort_index()
     expected_values_1 = pd.Series([np.log10(1 + 1 / i) for i in range(1, 10)], index=[str(i) for i in range(1, 10)]) * len(df[column])
     p_value(observed_values_1, expected_values_1, "first")
     axs[0].bar(observed_values_1.index, observed_values_1.values / len(df[column]), label='Observed')
