@@ -25,7 +25,6 @@ def benfords_law_test(df, column):
     axs[0].set_ylabel('Frequency')
     axs[0].legend()
     axs[0].set_title('Benford\'s Law Analysis: First Digit')
-    axs[0].axvline(x=6.5, color='red', linestyle='--')
     # plot the two digit data
     axs[1].bar(range(10, 100), two_digit_freq, alpha=0.5, label='Expected Frequency')
     axs[1].bar(two_digit_counts.index.astype(int), two_digit_freq_obs, alpha=0.5, label='Observed Frequency')
@@ -33,7 +32,6 @@ def benfords_law_test(df, column):
     axs[1].set_ylabel('Frequency')
     axs[1].legend()
     axs[1].set_title('Benford\'s Law Analysis: Two Digits')
-    axs[1].axvline(x=58, color='red', linestyle='--')
     # plot the three digit data
     axs[2].bar(range(100, 1000), three_digit_freq, alpha=0.5, label='Expected Frequency')
     axs[2].bar(three_digit_counts.index.astype(int), three_digit_freq_obs, alpha=0.5, label='Observed Frequency')
@@ -41,7 +39,6 @@ def benfords_law_test(df, column):
     axs[2].set_ylabel('Frequency')
     axs[2].legend()
     axs[2].set_title('Benford\'s Law Analysis: Three Digits')
-    axs[2].axvline(x=499, color='red', linestyle='--')
     # set the overall title and layout
     plt.suptitle('Benford\'s Law Analysis')
     plt.tight_layout()
