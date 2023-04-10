@@ -9,7 +9,7 @@ def benfords_law_test(df, column):
     two_digit_freq = np.array([np.log10(1 + 1 / (10 * i + j)) for i in range(1, 10) for j in range(0, 10)])
     three_digit_freq = np.array([np.log10(1 + 1 / (100 * i + 10 * j + k)) for i in range(1, 10) for j in range(0, 10) for k in range(0, 10)])
     # count the occurrences of each first, two, and three digit combination in the numbers column
-    first_digit_counts = df['Numbers'].astype(str).str[0].value_counts()
+    first_digit_counts = df['Numbers'].astype(str).str[:1].value_counts()
     two_digit_counts = df['Numbers'].astype(str).str[:2].value_counts()
     three_digit_counts = df['Numbers'].astype(str).str[:3].value_counts()
     # normalize the counts to get the observed frequencies
