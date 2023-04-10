@@ -18,10 +18,7 @@ def benfords_law_test(df, column):
     plt.title('Benford\'s Law Test')
     plt.legend()
     plt.show()
-
-    # Display the dataframe
     st.pyplot(fig)
-
     
 st.title("## Benford's Law Test")
 
