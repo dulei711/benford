@@ -19,33 +19,35 @@ def benfords_law_test(df, column):
     three_digit_freq_obs = three_digit_counts / three_digit_counts.sum()
     
     # create a figure with 3 subplots
-    fig, axs = plt.subplots(3, 1, figsize=(10, 15))
-    plt.subplots_adjust(hspace=0.4)
-    
-    # plot the first digit results
-    axs[0].bar(first_digit_counts.index.astype(int), first_digit_freq_obs.values, color='b', alpha=0.5)
-    axs[0].plot(range(1, 10), first_digit_freq, color='r', marker='o')
-    axs[0].set_xticks(range(1, 10))
-    axs[0].set_title('First Digit')
-    axs[0].set_ylabel('Frequency')
-    axs[0].legend(['Expected', 'Observed'])
+    fig, axes = plt.subplots(3, 1, figsize=(20, 10))
+    fig.subplots_adjust(hspace=0.4)
 
-    # plot the two digit results
-    axs[1].bar(two_digit_counts.index.astype(int), two_digit_freq_obs.values, color='b', alpha=0.5)
-    axs[1].plot(range(10, 100), two_digit_freq, color='r', marker='o')
-    axs[1].set_xticks(range(10, 100, 10))
-    axs[1].set_title('Two Digits')
-    axs[1].set_ylabel('Frequency')
-    axs[1].legend(['Expected', 'Observed'])
+    # plot the first digit frequencies
+    ax1 = axes[0]
+    ax1.bar(first_digit_counts.index.astype(int), first_digit_freq_obs, color='b', alpha=0.5, label='Observed')
+    ax1.plot(first_digit_counts.index.astype(int), first_digit_freq, color='r', label='Expected')
+    ax1.set_title('First Digit Frequencies')
+    ax1.set_xlabel('First Digit')
+    ax1.set_ylabel('Frequency')
+    ax1.legend()
 
-    # plot the three digit results
-    axs[2].bar(three_digit_counts.index.astype(int), three_digit_freq_obs.values, color='b', alpha=0.5)
-    axs[2].plot(range(100, 1000), three_digit_freq, color='r', marker='o')
-    axs[2].set_xticks(range(100, 1000, 100))
-    axs[2].set_title('Three Digits')
-    axs[2].set_ylabel('Frequency')
-    axs[2].legend(['Expected', 'Observed'])
-    
+    # plot the two digit frequencies
+    ax2 = axes[1]
+    ax2.bar(two_digit_counts.index.astype(int), two_digit_freq_obs, color='g', alpha=0.5, label='Observed')
+    ax2.plot(two_digit_counts.index.astype(int), two_digit_freq, color='r', label='Expected')
+    ax2.set_title('Two Digit Frequencies')
+    ax2.set_xlabel('Two Digits')
+    ax2.set_ylabel('Frequency')
+    ax2.legend()
+
+    # plot the three digit frequencies
+    ax3 = axes[2]
+    ax3.bar(three_digit_counts.index.astype(int), three_digit_freq_obs, color='m', alpha=0.5, label='Observed')
+    ax3.plot(three_digit_counts.index.astype(int), three_digit_freq, color='r', label='Expected')
+    ax3.set_title('Three Digit Frequencies')
+    ax3.set_xlabel('Three Digits')
+    ax3.set_ylabel('Frequency')
+    ax3.legend()    
     st.pyplot(fig)
     
 st.title("## Benford's Law Test")
