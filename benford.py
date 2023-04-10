@@ -35,7 +35,7 @@ def benfords_law_test(df, column):
     axs[1].plot(expected_values_2.index, expected_values_2.values / len(df[column]), 'ro-', label='Expected')
     axs[1].set_xlabel('Second digit')
     axs[1].set_ylabel('Frequency')
-    axs[1].set_xticklabels([''] + [str(i).zfill(2) for i in range(10, 100, 10)])
+    axs[1].set_xticklabels([''] + [str(i).zfill(2) for i in range(1, 100, 1)])
     axs[1].legend()
     axs[1].set_title('Second position')
 
