@@ -22,51 +22,34 @@ def benfords_law_test(df, column):
     two_digit_freq_obs = two_digit_counts / two_digit_counts.sum()
     three_digit_freq_obs = three_digit_counts / three_digit_counts.sum()
     
-    # create a figure with three subplots
-    fig, axes = plt.subplots(nrows=3, ncols=1, figsize=(10, 10))
+    # create plots comparing the observed and expected frequencies
+    fig, ax = plt.subplots(3, 1, figsize=(8, 12))
 
-    # filter out the expected frequencies without corresponding observed numbers
-    first_digit_freq_filt = np.where(first_digit_counts.index.isin(x), first_digit_freq, 0)
-    two_digit_freq_filt = np.where(two_digit_counts.index.isin(x), two_digit_freq, 0)
-    three_digit_freq_filt = np.where(three_digit_counts.index.isin(x), three_digit_freq, 0)
+    # plot for first digits
+    expected_first = ax[0].bar(np.arange(1, 10), first_digit_freq, alpha=0.5, label='Expected')
+    observed_first = ax[0].bar(first_digit_counts.index.astype(int), first_digit_freq_obs.loc[first_digit_counts.index.astype(str)], alpha=0.5, label='Observed')
+    ax[0].set_xlabel('First Digit')
+    ax[0].set_ylabel('Frequency')
+    ax[0].set_title('First Digit Frequencies')
+    ax[0].legend()
 
-    # plot a bar chart comparing the expected and observed frequencies for the first digit
-    ax = axes[0]
-    x = np.arange(1, 10)
-    ax.bar(x, first_digit_freq_filt, color='blue', alpha=0.5, label='Expected')
-    ax.bar(first_digit_counts.index.astype(int), first_digit_freq_obs, color='orange', alpha=0.5, label='Observed')
-    ax.set_xticks(x)
-    ax.set_xticklabels(x)
-    ax.set_xlabel('First Digit')
-    ax.set_ylabel('Frequency')
-    ax.set_title('Benford\'s Law for First Digit')
-    ax.legend()
+    # plot for two digits
+    expected_two = ax[1].bar(np.arange(10, 100), two_digit_freq, alpha=0.5, label='Expected')
+    observed_two = ax[1].bar(two_digit_counts.index.astype(int), two_digit_freq_obs.loc[two_digit_counts.index.astype(str)], alpha=0.5, label='Observed')
+    ax[1].set_xlabel('Two Digits')
+    ax[1].set_ylabel('Frequency')
+    ax[1].set_title('Two Digits Frequencies')
+    ax[1].legend()
 
-    # plot a bar chart comparing the expected and observed frequencies for the two digits
-    ax = axes[1]
-    x = np.arange(10, 100)
-    ax.bar(x, two_digit_freq_filt, color='blue', alpha=0.5, label='Expected')
-    ax.bar(two_digit_counts.index.astype(int), two_digit_freq_obs, color='orange', alpha=0.5, label='Observed')
-    ax.set_xticks(x[::10])
-    ax.set_xticklabels(x[::10])
-    ax.set_xlabel('Two Digits')
-    ax.set_ylabel('Frequency')
-    ax.set_title('Benford\'s Law for Two Digits')
-    ax.legend()
+    # plot for three digits
+    expected_three = ax[2].bar(np.arange(100, 1000), three_digit_freq, alpha=0.5, label='Expected')
+    observed_three = ax[2].bar(three_digit_counts.index.astype(int), three_digit_freq_obs.loc[three_digit_counts.index.astype(str)], alpha=0.5, label='Observed')
+    ax[2].set_xlabel('Three Digits')
+    ax[2].set_ylabel('Frequency')
+    ax[2].set_title('Three Digits Frequencies')
+    ax[2].legend()
 
-    # plot a bar chart comparing the expected and observed frequencies for the three digits
-    ax = axes[2]
-    x = np.arange(100, 1000)
-    ax.bar(x, three_digit_freq_filt, color='blue', alpha=0.5, label='Expected')
-    ax.bar(three_digit_counts.index.astype(int), three_digit_freq_obs, color='orange', alpha=0.5, label='Observed')
-    ax.set_xticks(x[::100])
-    ax.set_xticklabels(x[::100])
-    ax.set_xlabel('Three Digits')
-    ax.set_ylabel('Frequency')
-    ax.set_title('Benford\'s Law for Three Digits')
-    ax.legend()
-
-    plt.tight_layout()    
+    plt.tight_layout()
     st.pyplot(fig)
     
 st.title("## Benford's Law Test")
