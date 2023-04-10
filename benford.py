@@ -13,10 +13,10 @@ def p_value(observed_values, expected_values, digit):
         st.write("The column", column, "does not seem to contain fraudulent data (p-value =", p_value, ") on the ", digit, "digit")
 
 def benfords_law_test(df, column):    
-    dff = df[column].value_counts()
-    count_df = pd.DataFrame({'Value': dff.index, 'Count': dff.values})
+    number_counts = df[column].value_counts()
+    count_df = pd.DataFrame({'Number': number_counts.index, 'Count': number_counts.values})
     count_df['Observed Frequency'] = count_df['Count'] / count_df['Count'].sum()
-    count_df['Expected Frequency'] = np.log10(1 + 1 / cout_df['Value'])
+    count_df['Expected Frequency'] = np.log10(1 + 1/count_df['Number']) / np.log10(10)
     st.dataframe(count_df)
     
 st.title("## Benford's Law Test")
