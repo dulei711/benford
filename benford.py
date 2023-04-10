@@ -42,7 +42,8 @@ def benfords_law_test(df, column):
 
     # Second position
     observed_values_2 = df[column].astype(str).str[:2].value_counts().sort_index()
-    expected_values_2 = pd.Series([np.log10(1 + 1 / i) for i in range(1, 100)], index=[str(i) for i in range(0, 99)]) * len(df[column])
+    #expected_values_2 = pd.Series([np.log10(1 + 1 / i) for i in range(1, 100)], index=[str(i) for i in range(0, 99)]) * len(df[column])
+    expected_values_2 = pd.Series([np.log10(1 + 1 / i) for i in range(1, 100)], index=[str(i).zfill(2) for i in range(0, 100)]) * len(df[column])
     axs[1].bar(observed_values_2.index, observed_values_2.values / len(df[column]), label='Observed')
     axs[1].plot(expected_values_2.index, expected_values_2.values / len(df[column]), 'ro-', label='Expected')
     axs[1].set_xlabel('Second digit')
@@ -52,7 +53,8 @@ def benfords_law_test(df, column):
 
     # Third position
     observed_values_3 = df[column].astype(str).str[:3].value_counts().sort_index()
-    expected_values_3 = pd.Series([np.log10(1 + 1 / i) for i in range(1, 1000)], index=[str(i) for i in range(0, 999)]) * len(df[column])
+    #expected_values_3 = pd.Series([np.log10(1 + 1 / i) for i in range(1, 1000)], index=[str(i) for i in range(0, 999)]) * len(df[column])
+    expected_values_3 = pd.Series([np.log10(1 + 1 / i) for i in range(1, 1000)], index=[str(i).zfill(3) for i in range(0, 1000)]) * len(df[column])
     axs[2].bar(observed_values_3.index, observed_values_3.values / len(df[column]), label='Observed')
     axs[2].plot(expected_values_3.index, expected_values_3.values / len(df[column]), 'ro-', label='Expected')
     axs[2].set_xlabel('Third digit')
