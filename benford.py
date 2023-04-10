@@ -68,7 +68,8 @@ uploaded_file = st.file_uploader("Choose a file")
 if uploaded_file is not None:
     df = pd.read_excel(uploaded_file)
     column = st.selectbox("Select a column:", df.columns)
-    benfords_law_test(df, column)
-    chi_square_test(df, column)
+    if st.button("Run"):
+        benfords_law_test(df, column)
+        chi_square_test(df, column)
 
     
