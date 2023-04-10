@@ -5,6 +5,7 @@ from scipy.stats import chi2_contingency
 from scipy.stats import kstest
 import matplotlib.pyplot as plt
 
+
 def chi_square_test(df, column):
     categories = pd.unique(df[column])
     obs_freq = []
@@ -16,6 +17,7 @@ def chi_square_test(df, column):
         st.write("The column", column, "may contain fraudulent data (p-value =", p, ")")
     else:
         st.write("The column", column, "does not seem to contain fraudulent data (p-value =", p, ")")
+    
 
 def benfords_law_test(df, column):
     observed_values = df[column].astype(str).str[0].value_counts().sort_index()
@@ -26,7 +28,7 @@ def benfords_law_test(df, column):
     else:
         st.write("The column", column, "does not seem to contain fraudulent data (p-value =", p_value, ")")
 
-    fig, axs = plt.subplots(1, 3, figsize=(15, 5))
+    fig, axs = plt.subplots(3, 1, figsize=(15, 5))
     
     # First position
     observed_values_1 = df[column].astype(str).str[0].value_counts().sort_index()
