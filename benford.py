@@ -29,7 +29,7 @@ def benfords_law_test(df, column):
     ax = axes[0]
     x = np.arange(1, 10)
     ax.bar(x, first_digit_freq, color='blue', alpha=0.5, label='Expected')
-    ax.bar(x, first_digit_freq_obs, color='orange', alpha=0.5, label='Observed')
+    ax.bar(x, first_digit_freq_obs[x-1], color='orange', alpha=0.5, label='Observed')
     ax.set_xticks(x)
     ax.set_xticklabels(x)
     ax.set_xlabel('First Digit')
@@ -41,7 +41,7 @@ def benfords_law_test(df, column):
     ax = axes[1]
     x = np.arange(10, 100)
     ax.bar(x, two_digit_freq, color='blue', alpha=0.5, label='Expected')
-    ax.bar(x, two_digit_freq_obs, color='orange', alpha=0.5, label='Observed')
+    ax.bar(x, two_digit_freq_obs[x-10], color='orange', alpha=0.5, label='Observed')
     ax.set_xticks(x[::10])
     ax.set_xticklabels(x[::10])
     ax.set_xlabel('Two Digits')
@@ -53,15 +53,12 @@ def benfords_law_test(df, column):
     ax = axes[2]
     x = np.arange(100, 1000)
     ax.bar(x, three_digit_freq, color='blue', alpha=0.5, label='Expected')
-    ax.bar(x, three_digit_freq_obs, color='orange', alpha=0.5, label='Observed')
+    ax.bar(x, three_digit_freq_obs[x-100], color='orange', alpha=0.5, label='Observed')
     ax.set_xticks(x[::100])
     ax.set_xticklabels(x[::100])
     ax.set_xlabel('Three Digits')
     ax.set_ylabel('Frequency')
     ax.set_title('Benford\'s Law for Three Digits')
-    ax.legend()
-    
-    plt.tight()
     st.pyplot(fig)
     
 st.title("## Benford's Law Test")
