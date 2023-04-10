@@ -8,7 +8,8 @@ import seaborn as sns
 # set the style to seaborn-darkgrid
 sns.set_style("darkgrid")
 
-def benfords_law_test(df, column):    
+def benfords_law_test(df, column):
+    df[column] = df[column].astype(float)
     # calculate the expected frequencies for the first digit using Benford's Law
     first_digit_freq = np.log10(1 + 1 / np.arange(1, 10))
     two_digit_freq = np.array([np.log10(1 + 1 / (10 * i + j)) for i in range(1, 10) for j in range(0, 10)])
