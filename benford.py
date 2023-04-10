@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from scipy.stats import chisquare
-import matplotlib as plt
+import matplotlib.pyplot as plt
 
 def benfords_law_test(df, column):    
     # calculate the expected frequencies for the first digit using Benford's Law
