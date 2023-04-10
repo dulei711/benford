@@ -17,22 +17,6 @@ def benfords_law_test(df, column):
     first_digit_freq_obs = first_digit_counts / first_digit_counts.sum()
     two_digit_freq_obs = two_digit_counts / two_digit_counts.sum()
     three_digit_freq_obs = three_digit_counts / three_digit_counts.sum()
-    # create lists of digit ranges and expected/observed frequencies for each chart
-    digit_ranges = [range(1, 10), range(10, 100), range(100, 1000)]
-    expected_freqs = [first_digit_freq, two_digit_freq, three_digit_freq]
-    observed_freqs = [first_digit_freq_obs, two_digit_freq_obs, three_digit_freq_obs]
-    #plot with matplotlib
-    fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(25,10))
-    for i, ax in enumerate(axes):
-        ax.bar(digit_ranges[i], expected_freqs[i], alpha=0.5, color='b', label='Expected Frequency')
-        ax.bar(digit_ranges[i], observed_freqs[i], alpha=0.5, color='r', label='Observed Frequency')
-        ax.set_xlabel('Digits')
-        ax.set_ylabel('Frequency')
-        ax.set_title(f'Benford\'s Law Analysis: {i+1} Digits')
-        ax.legend(loc='best')
-    plt.tight_layout()
-    st.pyplot(fig)
-
     
 st.title("## Benford's Law Test")
 
