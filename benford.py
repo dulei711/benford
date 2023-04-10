@@ -41,9 +41,7 @@ def benfords_law_test(df, column):
     # Second position
     observed_values_2 = df[column].astype(str).str[1].value_counts().sort_index()
     #expected_values_2 = pd.Series([np.log10(1 + 1 / i) for i in range(1, 10)], index=[str(i) for i in range(1, 10)]) * len(df[column])
-    second_digits = [int(str(abs(x))[1]) for x in df[column] if abs(x) >= 10]
-    index = pd.MultiIndex.from_product([range(1, 10), range(10)], names=['First Digit', 'Second Digit'])
-    expected_values_2 = pd.Series([np.log10(1 + 1 / (10*i + j)) for i in range(1, 10) for j in range(10)], index=index) * len(second_digits)
+    expected_values_2 = pd.Series([(i+1)/100 for i in range(0, 99, 1)], index=[str(i) for i in range(0, 100, 1)]) * len(df[column])
     axs[1].bar(observed_values_2.index, observed_values_2.values / len(df[column]), label='Observed')
     axs[1].plot(expected_values_2.index, expected_values_2.values / len(df[column]), 'ro-', label='Expected')
     axs[1].set_xlabel('Second digit')
@@ -54,9 +52,7 @@ def benfords_law_test(df, column):
     # Third position
     observed_values_3 = df[column].astype(str).str[2].value_counts().sort_index()
     #expected_values_3 = pd.Series([np.log10(1 + 1 / i) for i in range(1, 10)], index=[str(i) for i in range(1, 10)]) * len(df[column])
-    third_digits = [int(str(abs(x))[2]) for x in df[column] if abs(x) >= 100]
-    index = pd.MultiIndex.from_product([range(1, 10), range(10), range(10)], names=['First Digit', 'Second Digit', 'Third Digit'])
-    expected_values_3 = pd.Series([(np.log10(1 + 1 / (100*i + 10*j + k)) - np.log10(1 + 1 / (100*i + 10*j))) for i in range(1, 10) for j in range(10) for k in range(10)], index=index) * len(third_digits)
+    expected_values_3 = pd.Series([(i+1)/1000 for i in range(0, 999, 1)], index=[str(i) for i in range(0, 1000, 1)]) * len(df[column])
     axs[2].bar(observed_values_3.index, observed_values_3.values / len(df[column]), label='Observed')
     axs[2].plot(expected_values_3.index, expected_values_3.values / len(df[column]), 'ro-', label='Expected')
     axs[2].set_xlabel('Third digit')
