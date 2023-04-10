@@ -41,7 +41,7 @@ def benfords_law_test(df, column):
     axs[0].set_title('First position')
 
     # Second position
-    observed_values_2 = df[column].astype(str).str[0].str.pad(width=2, fillchar='0').value_counts().sort_index()
+    observed_values_2 = df[column].astype(str).str[:2].value_counts().sort_index()
     expected_values_2 = pd.Series([np.log10(1 + 1 / i) for i in range(1, 100)], index=[str(i) for i in range(0, 99)]) * len(df[column])
     axs[1].bar(observed_values_2.index, observed_values_2.values / len(df[column]), label='Observed')
     axs[1].plot(expected_values_2.index, expected_values_2.values / len(df[column]), 'ro-', label='Expected')
@@ -51,7 +51,7 @@ def benfords_law_test(df, column):
     axs[1].set_title('Second position')
 
     # Third position
-    observed_values_3 = df[column].astype(str).str[0].str.pad(width=3, fillchar='0').value_counts().sort_index()
+    observed_values_3 = df[column].astype(str).str[:3].value_counts().sort_index()
     expected_values_3 = pd.Series([np.log10(1 + 1 / i) for i in range(1, 1000)], index=[str(i) for i in range(0, 999)]) * len(df[column])
     axs[2].bar(observed_values_3.index, observed_values_3.values / len(df[column]), label='Observed')
     axs[2].plot(expected_values_3.index, expected_values_3.values / len(df[column]), 'ro-', label='Expected')
