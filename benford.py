@@ -42,4 +42,3 @@ if uploaded_file is not None:
     column = st.selectbox("Select a column:", df.columns)
     if st.button("Run"):
         benfords_law_test(df, column)
-        plot_benfords_law(digit_ranges, expected_freqs, observed_freqs)
