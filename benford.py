@@ -16,9 +16,7 @@ def benfords_law_test(df, column):
     plt.xlabel('Number')
     plt.ylabel('Frequency')
     plt.title('Benford\'s Law Test')
-    plt.legend()
-    plt.show()
-    st.pyplot(fig)
+    st.pyplot()
     
 st.title("## Benford's Law Test")
 
