@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 def benfords_law_test(df, column):    
     number_counts = df[column].value_counts()
-    st.dataframe(number_counts)
+    st.dataframe(pd.Dataframe(number_counts))
     count_df = pd.DataFrame({'Number': number_counts.index, 'Count': number_counts.values})
     count_df['Observed Frequency'] = count_df['Count'] / count_df['Count'].sum()
     count_df['Expected Frequency'] = np.log10(1 + 1/count_df['Number']) / np.log10(10)
