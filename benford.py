@@ -45,18 +45,6 @@ def benfords_law_test(df, column):
     plt.tight_layout()
     # display the plot
     st.pyplot(fig)
-    
-    # calculate chi-squared tests and p-values
-    first_digit_chi2, first_digit_pval = chisquare(first_digit_freq_obs, first_digit_freq)
-    two_digit_chi2, two_digit_pval = chisquare(two_digit_freq_obs, two_digit_freq)
-    three_digit_chi2, three_digit_pval = chisquare(three_digit_freq_obs, three_digit_freq)
-    # print the expected and observed frequencies and chi-squared test results for the first, two, and three digits
-    st.text('First Digit:')
-    st.table(pd.DataFrame({'Expected Frequency': first_digit_freq, 'Observed Frequency': first_digit_freq_obs, 'Chi-Squared Test': first_digit_chi2, 'p-value': first_digit_pval}))
-    st.text('Two Digits:')
-    st.table(pd.DataFrame({'Expected Frequency': two_digit_freq, 'Observed Frequency': two_digit_freq_obs, 'Chi-Squared Test': two_digit_chi2, 'p-value': two_digit_pval}))
-    st.text('Three Digits:')
-    st.table(pd.DataFrame({'Expected Frequency': three_digit_freq, 'Observed Frequency': three_digit_freq_obs, 'Chi-Squared Test': three_digit_chi2, 'p-value': three_digit_pval}))
 
 st.title("## Benford's Law Test")
 
