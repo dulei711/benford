@@ -20,31 +20,29 @@ def benfords_law_test(df, column):
     
     fig, axs = plt.subplots(3, 1, figsize=(8, 12))
     
-    # plot the comparison between expected and observed frequencies for first digit
-    axs[0].bar(np.arange(1, 10), first_digit_freq, label='Expected', alpha=0.5)
-    axs[0].bar(np.arange(1, 10), first_digit_freq_obs, label='Observed', alpha=0.5)
-    axs[0].set_title('First Digit')
-    axs[0].set_xlabel('Digit')
+    # plot the expected and observed frequencies for the first digit
+    axs[0].bar(np.arange(1, 10), first_digit_freq, label='Expected')
+    axs[0].bar(np.arange(1, 10), first_digit_freq_obs, alpha=0.5, label='Observed')
+    axs[0].set_xlabel('First Digit')
     axs[0].set_ylabel('Frequency')
+    axs[0].set_title('First Digit')
     axs[0].legend()
     
-    # plot the comparison between expected and observed frequencies for two digits
-    axs[1].bar(np.arange(10, 100), two_digit_freq, label='Expected', alpha=0.5)
-    axs[1].bar(np.arange(10, 100), two_digit_freq_obs, label='Observed', alpha=0.5)
-    axs[1].set_title('Two Digits')
-    axs[1].set_xlabel('Digit')
+    # plot the expected and observed frequencies for the two digits
+    axs[1].bar(np.arange(1, 100), two_digit_freq, label='Expected')
+    axs[1].bar(np.arange(1, 100), two_digit_freq_obs, alpha=0.5, label='Observed')
+    axs[1].set_xlabel('First Two Digits')
     axs[1].set_ylabel('Frequency')
+    axs[1].set_title('First Two Digits')
     axs[1].legend()
     
-    # plot the comparison between expected and observed frequencies for three digits
-    axs[2].bar(np.arange(100, 1000), three_digit_freq, label='Expected', alpha=0.5)
-    axs[2].bar(np.arange(100, 1000), three_digit_freq_obs, label='Observed', alpha=0.5)
-    axs[2].set_title('Three Digits')
-    axs[2].set_xlabel('Digit')
+    # plot the expected and observed frequencies for the three digits
+    axs[2].bar(np.arange(1, 1000), three_digit_freq, label='Expected')
+    axs[2].bar(np.arange(1, 1000), three_digit_freq_obs, alpha=0.5, label='Observed')
+    axs[2].set_xlabel('First Three Digits')
     axs[2].set_ylabel('Frequency')
+    axs[2].set_title('First Three Digits')
     axs[2].legend()
-    
-    plt.tight_layout()
     st.pyplot(fig)
     
 st.title("## Benford's Law Test")
