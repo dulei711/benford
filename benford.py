@@ -19,32 +19,32 @@ def benfords_law_test(df, column):
     three_digit_freq_obs = three_digit_counts / three_digit_counts.sum()
     
     # create a figure with 3 subplots
-    fig, axs = plt.subplots(3, 2, figsize=(10, 15))
+    fig, axs = plt.subplots(3, 1, figsize=(10, 15))
     plt.subplots_adjust(hspace=0.4)
     
     # plot the first digit results
-    axs[0, 0].bar(first_digit_counts.index.astype(int), first_digit_freq_obs.values, color='b', alpha=0.5)
-    axs[0, 0].plot(range(1, 10), first_digit_freq, color='r', marker='o')
-    axs[0, 0].set_xticks(range(1, 10))
-    axs[0, 0].set_title('First Digit')
-    axs[0, 0].set_ylabel('Frequency')
-    axs[0, 0].legend(['Expected', 'Observed'])
+    axs[0].bar(first_digit_counts.index.astype(int), first_digit_freq_obs.values, color='b', alpha=0.5)
+    axs[0].plot(range(1, 10), first_digit_freq, color='r', marker='o')
+    axs[0].set_xticks(range(1, 10))
+    axs[0].set_title('First Digit')
+    axs[0].set_ylabel('Frequency')
+    axs[0].legend(['Expected', 'Observed'])
 
     # plot the two digit results
-    axs[1, 0].bar(two_digit_counts.index.astype(int), two_digit_freq_obs.values, color='b', alpha=0.5)
-    axs[1, 0].plot(range(10, 100), two_digit_freq, color='r', marker='o')
-    axs[1, 0].set_xticks(range(10, 100, 10))
-    axs[1, 0].set_title('Two Digits')
-    axs[1, 0].set_ylabel('Frequency')
-    axs[1, 0].legend(['Expected', 'Observed'])
+    axs[1].bar(two_digit_counts.index.astype(int), two_digit_freq_obs.values, color='b', alpha=0.5)
+    axs[1].plot(range(10, 100), two_digit_freq, color='r', marker='o')
+    axs[1].set_xticks(range(10, 100, 10))
+    axs[1].set_title('Two Digits')
+    axs[1].set_ylabel('Frequency')
+    axs[1].legend(['Expected', 'Observed'])
 
     # plot the three digit results
-    axs[2, 0].bar(three_digit_counts.index.astype(int), three_digit_freq_obs.values, color='b', alpha=0.5)
-    axs[2, 0].plot(range(100, 1000), three_digit_freq, color='r', marker='o')
-    axs[2, 0].set_xticks(range(100, 1000, 100))
-    axs[2, 0].set_title('Three Digits')
-    axs[2, 0].set_ylabel('Frequency')
-    axs[2, 0].legend(['Expected', 'Observed'])
+    axs[2].bar(three_digit_counts.index.astype(int), three_digit_freq_obs.values, color='b', alpha=0.5)
+    axs[2].plot(range(100, 1000), three_digit_freq, color='r', marker='o')
+    axs[2].set_xticks(range(100, 1000, 100))
+    axs[2].set_title('Three Digits')
+    axs[2].set_ylabel('Frequency')
+    axs[2].legend(['Expected', 'Observed'])
     
     st.pyplot(fig)
     
