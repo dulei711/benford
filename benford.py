@@ -21,13 +21,9 @@ def benfords_law_test(df, column):
     three_digit_freq_obs = three_digit_counts / three_digit_counts.sum()
 
     # print the expected and observed frequencies for the first, two, and three digits
-    st.text('First Digit:')
-    st.dataframe(pd.DataFrame({'Expected Frequency': first_digit_freq, 'Observed Frequency': first_digit_freq_obs})
-
-    st.text('Two Digits:')
+    
+    st.dataframe(pd.DataFrame({'Expected Frequency': first_digit_freq, 'Observed Frequency': first_digit_freq_obs}))
     st.dataframe(pd.DataFrame({'Expected Frequency': two_digit_freq, 'Observed Frequency': two_digit_freq_obs}))
-
-    st.text('Three Digits:')
     st.dataframe(pd.DataFrame({'Expected Frequency': three_digit_freq, 'Observed Frequency': three_digit_freq_obs}))
     
     # create the figure and subplots
