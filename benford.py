@@ -19,7 +19,7 @@ def benfords_law_test(df, column):
     observed_values_1 = df[column].astype(str).str[0].value_counts().sort_index()
     expected_values_1 = pd.Series([np.log10(1 + 1 / i) for i in range(1, 10)], index=[str(i) for i in range(1, 10)]) * len(df[column])
     p_value(observed_values_1, expected_values_1, "first")
-    st.dataframe = observed_values_1
+    st.dataframe(observed_values_1)
     
     # Second position
     observed_values_2 = df[column].astype(str).str[:2].value_counts().sort_values()
@@ -31,7 +31,7 @@ def benfords_law_test(df, column):
     observed_values_3 = df[column].astype(str).str[:3].value_counts().sort_values()
     expected_values_3 = pd.Series([np.log10(1 + 1 / i) for i in range(1, 1000)], index=[str(i) for i in range(0, 999)]) * len(df[column])                    
     p_value(observed_values_3, expected_values_3, "third")
-    st.dataframe = observed_values_3
+    st.dataframe(observed_values_3)
 
     
 st.title("## Benford's Law Test")
