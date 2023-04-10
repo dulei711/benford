@@ -13,36 +13,12 @@ def p_value(observed_values, expected_values, digit):
         st.write("The column", column, "does not seem to contain fraudulent data (p-value =", p_value, ") on the ", digit, "digit")
 
 def benfords_law_test(df, column):    
-    # First position
-    observed_values_1 = df[column].astype(str).str[0].value_counts().sort_index()
-    p_value(observed_values_1, expected_values_1, "first")
-        
-    # Second position
-    observed_values_2 = df[column].astype(str).str[:2].value_counts().sort_values()
-    p_value(observed_values_2, expected_values_2, "second")
-        
-    # Third position
-    observed_values_3 = df[column].astype(str).str[:3].value_counts().sort_values()
-    p_value(observed_values_3, expected_values_3, "third")
-        
-    # Compile results into a DataFrame
-    observed_values = pd.concat([observed_values_1, observed_values_2, observed_values_3], axis=1)
-    observed_values.columns = ['First Digit_observed', 'First 2 Digits_observed', 'First 3 Digits_observed']
+    dff = df[column].value_counts()
+    count_df = pd.DataFrame({'Value': dff.index, 'Count': dff.values})
+    count_df['Observed Frequency'] = count_df['Count'] / count_df['Count'].sum()
+    count_df['Expected Frequency'] = np.log10(1 + 1 / cout_df['Value'])
+    st.dataframe(count_df)
     
-    expected_values = pd.concat([expected_values_1, expected_values_2, expected_values_3], axis=1)
-    expected_values.columns = ['First Digit', 'First 2 Digits', 'First 3 Digits']
-    expected_values[expected_values_1] = np.log10(1 + 1 / oberved_values[observed_values_1])
-    expected_values[expected_values_2] = np.log10(1 + 1 / oberved_values[observed_values_2])
-    expected_values[expected_values_3] = np.log10(1 + 1 / oberved_values[observed_values_3])
-    
-    freq_df = pd.concat([observed_values, expected_values], axis=1)
-    freq_df = freq_df.fillna(0)
-    freq_df = freq_df.astype(int)
-    freq_df.index.name = 'Digit'
-    freq_df['Difference'] = freq_df['First Digit'] - freq_df['First Digit'].apply(lambda x: round(x))
-    
-    return st.dataframe(freq_df)
-
 st.title("## Benford's Law Test")
 
 uploaded_file = st.file_uploader("Choose a file")
