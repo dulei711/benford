@@ -33,6 +33,9 @@ def chi_square_test(df, column):
     axs[0].legend()
     axs[0].set_title('Chi-Squared test')
     
+    plt.tight_layout()
+    st.pyplot(fig)
+    
 def benfords_law_test(df, column):
     fig, axs = plt.subplots(3, 1, figsize=(20, 10))
     
