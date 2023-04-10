@@ -37,7 +37,7 @@ def benfords_law_test(df, column):
 
     # plot the two digit results
     axs[1].bar(two_digit_counts.index.astype(int), two_digit_freq_obs.values, color='b', alpha=0.5)
-    axs[1].plot(range(10, 100), two_digit_freq, color='r', marker='o')
+    axs[1].plot(range(1, 100), two_digit_freq, color='r', marker='o')
     axs[1].set_xticks(range(10, 100, 10))
     axs[1].set_title('Two Digits')
     axs[1].set_ylabel('Frequency')
@@ -45,7 +45,7 @@ def benfords_law_test(df, column):
 
     # plot the three digit results
     axs[2].bar(three_digit_counts.index.astype(int), three_digit_freq_obs.values, color='b', alpha=0.5)
-    axs[2].plot(range(100, 1000), three_digit_freq, color='r', marker='o')
+    axs[2].plot(range(1, 1000), three_digit_freq, color='r', marker='o')
     axs[2].set_xticks(range(100, 1000, 100))
     axs[2].set_title('Three Digits')
     axs[2].set_ylabel('Frequency')
