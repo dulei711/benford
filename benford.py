@@ -12,9 +12,7 @@ def p_value(observed_values, expected_values, digit):
     else:
         st.write("The column", column, "does not seem to contain fraudulent data (p-value =", p_value, ") on the ", digit, "digit")
 
-def benfords_law_test(df, column):
-    fig, axs = plt.subplots(3, 1, figsize=(20, 10))
-    
+def benfords_law_test(df, column):    
     # First position
     observed_values_1 = df[column].astype(str).str[0].value_counts().sort_index()
     expected_values_1 = pd.Series([np.log10(1 + 1 / i) for i in range(1, 10)], index=[str(i) for i in range(1, 10)]) * len(df[column])
