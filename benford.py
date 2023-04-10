@@ -24,7 +24,7 @@ def benfords_law_test(df, column):
     
     # create a figure with 3 subplots
     # create a figure with 3 subplots
-    fig, axs = plt.subplots(3, 2, figsize=(10, 15))
+    fig, axs = plt.subplots(3, 1, figsize=(10, 15))
     plt.subplots_adjust(hspace=0.4)
     
     # plot the first digit results
